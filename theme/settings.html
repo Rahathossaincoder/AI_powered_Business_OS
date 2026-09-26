@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employees, Roles & Org Settings - Business OS / Wavespace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row bg-[#f3f4f6] relative overflow-x-hidden">
+
+  <!-- MOBILE TOP BAR -->
+  <div class="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+    <div class="flex items-center gap-2.5">
+      <button onclick="toggleMobileSidebar()" class="p-1.5 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">W</div>
+      <span class="font-bold text-gray-900 text-sm">Wavespace OS</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px]">SM</div>
+      <button onclick="logout()" title="Logout" class="p-1 text-rose-600 hover:bg-rose-50 rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- BACKDROP OVERLAY FOR MOBILE -->
+  <div id="mobile-backdrop" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity"></div>
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 min-h-screen p-4 select-none z-50">
+    <div class="space-y-6">
+      
+      <!-- WORKSPACE SELECTOR -->
+      <div class="flex items-center justify-between p-2.5 bg-white border border-gray-200 rounded-xl shadow-xs cursor-pointer hover:bg-gray-50 transition-colors">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-xs">
+            W
+          </div>
+          <span class="font-semibold text-gray-900 text-sm">Wavespace OS</span>
+        </div>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+        </svg>
+      </div>
+
+      <!-- NAVIGATION MENU -->
+      <nav class="space-y-1 text-sm font-medium">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          <span>Overview</span>
+        </a>
+
+        <a href="ai-analyst.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span>AI Analyst (Read-Only)</span>
+        </a>
+
+        <a href="products.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+          <span>Products &amp; Categories</span>
+        </a>
+
+        <a href="inventory.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span>Inventory Ledger</span>
+        </a>
+
+        <a href="customers.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span>Customers CRM</span>
+        </a>
+
+        <a href="orders.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span>Orders &amp; POS</span>
+        </a>
+
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2 text-gray-900 bg-gray-100/80 font-semibold rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <span>Employees &amp; Roles</span>
+        </a>
+
+        <a href="audit-logs.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span>Audit Logs</span>
+        </a>
+
+        <a href="billing.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          </svg>
+          <span>Org Settings &amp; Billing</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- USER PROFILE & LOGOUT BUTTON -->
+    <div class="space-y-3 pt-4 border-t border-gray-100 text-sm">
+      <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-200/80">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0">
+            SM
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-gray-900 truncate">Shahid Miah</div>
+            <div class="text-[11px] text-gray-500 truncate">shahid@wavespace.io</div>
+          </div>
+        </div>
+        <button onclick="logout()" title="Sign Out of Business OS" class="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT WRAPPER -->
+  <main class="flex-1 min-w-0 p-4 sm:p-6 md:p-8 space-y-6">
+
+    <!-- PAGE HEADER WITH ADD EMPLOYEE & ADD BRANCH BUTTONS -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Employees, Roles &amp; Branch Settings</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Manage employees (<code class="font-mono text-gray-600">employee_code</code>), branch locations (<code class="font-mono text-gray-600">BRANCH</code>), and roles &amp; permissions.</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5">
+        <!-- FEATURE: ADD NEW EMPLOYEE -->
+        <button onclick="openAddEmployeeModal()" class="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-2xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>+ Add Employee</span>
+        </button>
+
+        <!-- FEATURE: ADD NEW BRANCH -->
+        <button onclick="openAddBranchModal()" class="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-xs font-semibold hover:bg-gray-50 transition-colors shadow-2xs">
+          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          <span>+ Add Branch Location</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 space-y-6 shadow-xs">
+      
+      <!-- SUB-NAVIGATION TABS -->
+      <div class="flex items-center gap-4 sm:gap-6 border-b border-gray-200 text-xs font-medium overflow-x-auto custom-scrollbar pb-0.5">
+        <button onclick="switchTab('ROSTER')" id="stab-ROSTER" class="text-indigo-600 font-semibold pb-3 border-b-2 border-indigo-600 whitespace-nowrap">Employees Roster</button>
+        <button onclick="switchTab('ROLES')" id="stab-ROLES" class="text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap">Roles &amp; Permission Matrix</button>
+        <button onclick="switchTab('BRANCHES')" id="stab-BRANCHES" class="text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap">Branch Locations</button>
+      </div>
+
+      <!-- TAB 1: EMPLOYEES ROSTER TABLE -->
+      <div id="panel-ROSTER" class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-xs text-left min-w-[650px]">
+          <thead>
+            <tr class="border-y border-gray-100 bg-gray-50/60 text-[11px] font-semibold text-gray-500 uppercase">
+              <th class="py-2.5 px-3">Code</th>
+              <th class="py-2.5 px-3">Employee Name</th>
+              <th class="py-2.5 px-3">Job Title</th>
+              <th class="py-2.5 px-3">Assigned Branch</th>
+              <th class="py-2.5 px-3">Role</th>
+              <th class="py-2.5 px-3">Status</th>
+              <th class="py-2.5 px-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="emp-tbody" class="divide-y divide-gray-100 font-medium">
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-mono font-bold text-indigo-600">EMP-001</td>
+              <td class="py-3 px-3 font-bold text-gray-900">Shahid Miah</td>
+              <td class="py-3 px-3 text-gray-700">Chief Executive Officer</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-[11px]">BR-001 Main HQ</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold">Admin</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">ACTIVE</span></td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="alert('Editing EMP-001...')" class="px-2 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Edit</button>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-mono font-bold text-indigo-600">EMP-002</td>
+              <td class="py-3 px-3 font-bold text-gray-900">Alexandre Blanc</td>
+              <td class="py-3 px-3 text-gray-700">Inventory Operations Director</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-[11px]">BR-002 West Coast</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[11px] font-bold">Manager</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">ACTIVE</span></td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="alert('Editing EMP-002...')" class="px-2 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Edit</button>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-mono font-bold text-indigo-600">EMP-003</td>
+              <td class="py-3 px-3 font-bold text-gray-900">Jessica Wong</td>
+              <td class="py-3 px-3 text-gray-700">Lead Store Cashier</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-[11px]">BR-003 Downtown</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold">Cashier</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">ACTIVE</span></td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="alert('Editing EMP-003...')" class="px-2 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TAB 2: ROLES & PERMISSION MATRIX -->
+      <div id="panel-ROLES" class="hidden space-y-4 text-xs">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-600">Granular permission matrix (<code class="font-mono text-indigo-600">role_permissions</code>) assigned per role tier:</div>
+          <button onclick="openCreateRoleModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-2xs">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Create Role
+          </button>
+        </div>
+        
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-xs text-left min-w-[500px]" id="roles-matrix-table">
+            <thead>
+              <tr class="border-y border-gray-100 bg-gray-50/60 text-[11px] font-semibold text-gray-500 uppercase" id="roles-header-row">
+                <th class="py-2.5 px-3">Permission Module</th>
+                <th class="py-2.5 px-3 text-center">Admin</th>
+                <th class="py-2.5 px-3 text-center">Manager</th>
+                <th class="py-2.5 px-3 text-center">Cashier</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100" id="roles-matrix-body">
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-bold text-gray-900">products.read / products.create</td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+              </tr>
+
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-bold text-gray-900">inventory.adjust</td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>
+              </tr>
+
+              <tr>
+                <td class="py-2.5 px-3 font-mono font-bold text-gray-900">orders.create / orders.cancel</td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked disabled class="accent-indigo-600"></td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+                <td class="py-2.5 px-3 text-center"><input type="checkbox" checked class="accent-indigo-600"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex justify-end pt-2">
+          <button onclick="alert('Role permissions updated successfully!')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold text-xs hover:bg-indigo-700 transition-colors">
+            Save Permission Matrix
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 3: BRANCH LOCATIONS TABLE -->
+      <div id="panel-BRANCHES" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="text-xs text-gray-600 font-semibold">Registered Organization Branch Locations (<code class="font-mono text-indigo-600">BRANCH</code>):</div>
+          <button onclick="openAddBranchModal()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-semibold shadow-2xs">+ Add Branch</button>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-xs text-left min-w-[550px]">
+            <thead>
+              <tr class="border-y border-gray-100 bg-gray-50/60 text-[11px] font-semibold text-gray-500 uppercase">
+                <th class="py-2.5 px-3">Branch Code</th>
+                <th class="py-2.5 px-3">Branch Name</th>
+                <th class="py-2.5 px-3">City &amp; Country</th>
+                <th class="py-2.5 px-3">Is Main Branch</th>
+              </tr>
+            </thead>
+            <tbody id="branch-tbody" class="divide-y divide-gray-100 font-medium">
+              <tr>
+                <td class="py-3 px-3 font-mono font-bold text-indigo-600">BR-001</td>
+                <td class="py-3 px-3 font-bold text-gray-900">Main HQ Central Depot</td>
+                <td class="py-3 px-3 text-gray-600">Portland, OR, USA</td>
+                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">PRIMARY</span></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-mono font-bold text-indigo-600">BR-002</td>
+                <td class="py-3 px-3 font-bold text-gray-900">West Coast Fulfilment Hub</td>
+                <td class="py-3 px-3 text-gray-600">San Francisco, CA, USA</td>
+                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px]">Secondary</span></td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-mono font-bold text-indigo-600">BR-003</td>
+                <td class="py-3 px-3 font-bold text-gray-900">Downtown Retail Outlet</td>
+                <td class="py-3 px-3 text-gray-600">Austin, TX, USA</td>
+                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px]">Secondary</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL 1: ADD EMPLOYEE -->
+  <div id="add-emp-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xs">EMP</div>
+          <h2 class="text-base font-bold text-gray-900">Add New Employee Record</h2>
+        </div>
+        <button onclick="closeAddEmployeeModal()" class="text-gray-400 hover:text-gray-600 text-lg">✕</button>
+      </div>
+
+      <form onsubmit="saveEmployee(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">First Name</label>
+            <input type="text" id="e-fname" placeholder="Elena" required class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Last Name</label>
+            <input type="text" id="e-lname" placeholder="Rostova" required class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Job Title</label>
+            <input type="text" id="e-title" placeholder="Regional Manager" required class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Assigned Branch</label>
+            <select id="e-branch" class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+              <option value="BR-001 Main HQ">BR-001 Main HQ</option>
+              <option value="BR-002 West Coast">BR-002 West Coast</option>
+              <option value="BR-003 Downtown">BR-003 Downtown</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-900 mb-1">Role Assignment</label>
+          <select id="e-role" class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="Cashier">Cashier</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition-colors">
+          Create Employee Record
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD NEW BRANCH -->
+  <div id="add-branch-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xs">BR</div>
+          <h2 class="text-base font-bold text-gray-900">Add New Branch Location</h2>
+        </div>
+        <button onclick="closeAddBranchModal()" class="text-gray-400 hover:text-gray-600 text-lg">✕</button>
+      </div>
+
+      <form onsubmit="saveBranch(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Branch Code</label>
+            <input type="text" id="b-code" placeholder="BR-004" required class="w-full px-3 py-2 border border-gray-200 rounded-lg font-mono">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Branch Name</label>
+            <input type="text" id="b-name" placeholder="East Coast Logistics Hub" required class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">City &amp; State</label>
+            <input type="text" id="b-city" placeholder="Boston, MA" required class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Country</label>
+            <input type="text" id="b-country" value="USA" required class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="b-main" class="w-4 h-4 rounded text-indigo-600 accent-indigo-600 cursor-pointer">
+          <label for="b-main" class="text-gray-700 cursor-pointer">Set as Primary Organization HQ Branch</label>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition-colors">
+          Create BRANCH Entity Record
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: CREATE ROLE -->
+  <div id="create-role-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xs">R</div>
+          <h2 class="text-base font-bold text-gray-900">Create New Role</h2>
+        </div>
+        <button onclick="closeCreateRoleModal()" class="text-gray-400 hover:text-gray-600 text-lg">✕</button>
+      </div>
+
+      <form onsubmit="saveRole(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-gray-900 mb-1">Role Name</label>
+          <input type="text" id="r-name" placeholder="e.g. Warehouse Supervisor" required class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-indigo-600">
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-900 mb-1">Description</label>
+          <input type="text" id="r-desc" placeholder="Brief role description..." class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-indigo-600">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-900 mb-2">Initial Permissions</label>
+          <div class="space-y-2 bg-gray-50 rounded-xl p-3 border border-gray-200">
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="rp-products" class="w-3.5 h-3.5 accent-indigo-600">
+              <span class="font-mono text-gray-700">products.read / products.create</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="rp-inventory" class="w-3.5 h-3.5 accent-indigo-600">
+              <span class="font-mono text-gray-700">inventory.adjust</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="rp-orders" class="w-3.5 h-3.5 accent-indigo-600">
+              <span class="font-mono text-gray-700">orders.create / orders.cancel</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="rp-customers" class="w-3.5 h-3.5 accent-indigo-600">
+              <span class="font-mono text-gray-700">customers.read / customers.edit</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="rp-reports" class="w-3.5 h-3.5 accent-indigo-600">
+              <span class="font-mono text-gray-700">reports.view (AI Analyst)</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input type="checkbox" id="rp-settings" class="w-3.5 h-3.5 accent-indigo-600">
+              <span class="font-mono text-gray-700">settings.manage</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition-colors">
+          Create Role &amp; Add to Matrix
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      sidebar.classList.toggle('-translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to sign out of Business OS?')) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    function openAddEmployeeModal() { document.getElementById('add-emp-modal').classList.remove('hidden'); }
+    function closeAddEmployeeModal() { document.getElementById('add-emp-modal').classList.add('hidden'); }
+
+    function openAddBranchModal() { document.getElementById('add-branch-modal').classList.remove('hidden'); }
+    function closeAddBranchModal() { document.getElementById('add-branch-modal').classList.add('hidden'); }
+
+    function openCreateRoleModal() { document.getElementById('create-role-modal').classList.remove('hidden'); }
+    function closeCreateRoleModal() { document.getElementById('create-role-modal').classList.add('hidden'); }
+
+    function saveRole(e) {
+      e.preventDefault();
+      const name = document.getElementById('r-name').value.trim();
+      const pProducts = document.getElementById('rp-products').checked;
+      const pInventory = document.getElementById('rp-inventory').checked;
+      const pOrders = document.getElementById('rp-orders').checked;
+      const pCustomers = document.getElementById('rp-customers').checked;
+      const pReports = document.getElementById('rp-reports').checked;
+      const pSettings = document.getElementById('rp-settings').checked;
+
+      // Add new column header to the permission matrix
+      const headerRow = document.getElementById('roles-header-row');
+      const newTh = document.createElement('th');
+      newTh.className = 'py-2.5 px-3 text-center';
+      newTh.innerHTML = `<span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold">${name}</span>`;
+      headerRow.appendChild(newTh);
+
+      // Add checkbox cells to each existing row
+      const perms = [pProducts, pInventory, pOrders];
+      const rows = document.querySelectorAll('#roles-matrix-body tr');
+      rows.forEach((row, i) => {
+        const td = document.createElement('td');
+        td.className = 'py-2.5 px-3 text-center';
+        td.innerHTML = `<input type="checkbox" ${perms[i] ? 'checked' : ''} class="accent-indigo-600">`;
+        row.appendChild(td);
+      });
+
+      // Add new rows for additional permissions
+      const extraPerms = [
+        { label: 'customers.read / customers.edit', checked: pCustomers },
+        { label: 'reports.view (AI Analyst)', checked: pReports },
+        { label: 'settings.manage', checked: pSettings }
+      ];
+      const matrixBody = document.getElementById('roles-matrix-body');
+      const colCount = headerRow.children.length;
+      extraPerms.forEach(perm => {
+        // Check if row already exists
+        const existingRows = Array.from(matrixBody.querySelectorAll('td:first-child'));
+        const exists = existingRows.some(td => td.textContent.trim() === perm.label);
+        if (!exists) {
+          // Add a full new row with empty cells for existing roles + new role
+          const tr = document.createElement('tr');
+          tr.className = 'bg-indigo-50/10';
+          let cells = `<td class="py-2.5 px-3 font-mono font-bold text-gray-900">${perm.label}</td>`;
+          for (let i = 1; i < colCount - 1; i++) {
+            cells += `<td class="py-2.5 px-3 text-center"><input type="checkbox" class="accent-indigo-600"></td>`;
+          }
+          cells += `<td class="py-2.5 px-3 text-center"><input type="checkbox" ${perm.checked ? 'checked' : ''} class="accent-indigo-600"></td>`;
+          tr.innerHTML = cells;
+          matrixBody.appendChild(tr);
+        } else {
+          // Just add the new role cell to existing row
+          const row = existingRows.find(td => td.textContent.trim() === perm.label).closest('tr');
+          const td = document.createElement('td');
+          td.className = 'py-2.5 px-3 text-center';
+          td.innerHTML = `<input type="checkbox" ${perm.checked ? 'checked' : ''} class="accent-indigo-600">`;
+          row.appendChild(td);
+        }
+      });
+
+      // Add new role to employee role select
+      const roleSelects = document.querySelectorAll('#e-role');
+      roleSelects.forEach(sel => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+
+      closeCreateRoleModal();
+      // Reset form
+      e.target.reset();
+      // Switch to roles tab to show the result
+      switchTab('ROLES');
+      alert(`Role "${name}" created and added to the permission matrix.`);
+    }
+
+    function switchTab(tab) {
+      ['ROSTER', 'ROLES', 'BRANCHES'].forEach(t => {
+        const btn = document.getElementById('stab-' + t);
+        const panel = document.getElementById('panel-' + t);
+        if (t === tab) {
+          btn.className = 'text-indigo-600 font-semibold pb-3 border-b-2 border-indigo-600 whitespace-nowrap';
+          panel.classList.remove('hidden');
+        } else {
+          btn.className = 'text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap';
+          panel.classList.add('hidden');
+        }
+      });
+    }
+
+    function saveEmployee(e) {
+      e.preventDefault();
+      const fname = document.getElementById('e-fname').value;
+      const lname = document.getElementById('e-lname').value;
+      const title = document.getElementById('e-title').value;
+      const branch = document.getElementById('e-branch').value;
+      const role = document.getElementById('e-role').value;
+
+      const code = 'EMP-' + Math.floor(104 + Math.random() * 900);
+
+      const newRow = `
+        <tr class="hover:bg-gray-50/80 bg-indigo-50/20">
+          <td class="py-3 px-3 font-mono font-bold text-indigo-600">${code}</td>
+          <td class="py-3 px-3 font-bold text-gray-900">${fname} ${lname}</td>
+          <td class="py-3 px-3 text-gray-700">${title}</td>
+          <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-[11px]">${branch}</span></td>
+          <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[11px] font-bold">${role}</span></td>
+          <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">ACTIVE</span></td>
+          <td class="py-3 px-3 text-right">
+            <button onclick="alert('Editing...')" class="px-2 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Edit</button>
+          </td>
+        </tr>
+      `;
+
+      document.getElementById('emp-tbody').insertAdjacentHTML('afterbegin', newRow);
+      closeAddEmployeeModal();
+      alert(`Created Employee: ${fname} ${lname} (${code})`);
+    }
+
+    function saveBranch(e) {
+      e.preventDefault();
+      const code = document.getElementById('b-code').value;
+      const name = document.getElementById('b-name').value;
+      const city = document.getElementById('b-city').value;
+      const country = document.getElementById('b-country').value;
+      const isMain = document.getElementById('b-main').checked;
+
+      const newRow = `
+        <tr class="hover:bg-gray-50/80 bg-indigo-50/20">
+          <td class="py-3 px-3 font-mono font-bold text-indigo-600">${code}</td>
+          <td class="py-3 px-3 font-bold text-gray-900">${name}</td>
+          <td class="py-3 px-3 text-gray-600">${city}, ${country}</td>
+          <td class="py-3 px-3">${isMain ? '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">PRIMARY</span>' : '<span class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[11px]">Secondary</span>'}</td>
+        </tr>
+      `;
+
+      document.getElementById('branch-tbody').insertAdjacentHTML('afterbegin', newRow);
+      closeAddBranchModal();
+      switchTab('BRANCHES');
+      alert(`Created Branch: ${name} (${code})`);
+    }
+  </script>
+</body>
+</html>

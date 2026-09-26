@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders & POS Terminal - Business OS / Wavespace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row bg-[#f3f4f6] relative overflow-x-hidden">
+
+  <!-- MOBILE TOP BAR -->
+  <div class="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+    <div class="flex items-center gap-2.5">
+      <button onclick="toggleMobileSidebar()" class="p-1.5 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">W</div>
+      <span class="font-bold text-gray-900 text-sm">Wavespace OS</span>
+    </div>
+    <div class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px]">SM</div>
+  </div>
+
+  <!-- BACKDROP OVERLAY FOR MOBILE -->
+  <div id="mobile-backdrop" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity"></div>
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 min-h-screen p-4 select-none z-50">
+    <div class="space-y-6">
+      
+      <!-- WORKSPACE SELECTOR -->
+      <div class="flex items-center justify-between p-2.5 bg-white border border-gray-200 rounded-xl shadow-xs cursor-pointer hover:bg-gray-50 transition-colors">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-xs">
+            W
+          </div>
+          <span class="font-semibold text-gray-900 text-sm">Wavespace OS</span>
+        </div>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+        </svg>
+      </div>
+
+      <!-- NAVIGATION MENU -->
+      <nav class="space-y-1 text-sm font-medium">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          <span>Overview</span>
+        </a>
+
+        <a href="ai-analyst.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span>AI Analyst (Read-Only)</span>
+        </a>
+
+        <a href="products.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+          <span>Products &amp; Categories</span>
+        </a>
+
+        <a href="inventory.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span>Inventory Ledger</span>
+        </a>
+
+        <a href="customers.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span>Customers CRM</span>
+        </a>
+
+        <a href="orders.html" class="flex items-center gap-3 px-3 py-2 text-gray-900 bg-gray-100/80 font-semibold rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span>Orders &amp; POS</span>
+        </a>
+
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <span>Employees &amp; Roles</span>
+        </a>
+
+        <a href="audit-logs.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span>Audit Logs</span>
+        </a>
+
+        <a href="billing.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          </svg>
+          <span>Org Settings &amp; Billing</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- USER PROFILE -->
+    <div class="space-y-3 pt-4 border-t border-gray-100 text-sm">
+      <div class="flex items-center justify-between gap-3 p-2 rounded-xl bg-gray-50 border border-gray-200/80">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0">
+            SM
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-gray-900 truncate">Shahid Miah</div>
+            <div class="text-[11px] text-gray-500 truncate">shahid@wavespace.io</div>
+          </div>
+        </div>
+        <button onclick="logout()" title="Sign Out of Business OS" class="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT WRAPPER -->
+  <main class="flex-1 min-w-0 p-4 sm:p-6 md:p-8 space-y-6">
+
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Orders &amp; POS Checkout</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Live branch order fulfillment, point-of-sale checkout, payments, and receipt generation.</p>
+      </div>
+      
+      <button onclick="openPosModal()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-2xs">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span>+ Open POS Checkout Modal</span>
+      </button>
+    </div>
+
+    <!-- MAIN ORDERS CARD -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 space-y-6 shadow-xs">
+      
+      <!-- STATUS TABS -->
+      <div class="flex items-center gap-4 sm:gap-6 border-b border-gray-200 text-xs font-medium overflow-x-auto custom-scrollbar pb-0.5">
+        <button onclick="filterOrders('ALL')" id="tab-ALL" class="text-indigo-600 font-semibold pb-3 border-b-2 border-indigo-600 whitespace-nowrap">All Orders (1,842)</button>
+        <button onclick="filterOrders('PENDING')" id="tab-PENDING" class="text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap">Pending (14)</button>
+        <button onclick="filterOrders('COMPLETED')" id="tab-COMPLETED" class="text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap">Completed (1,780)</button>
+        <button onclick="filterOrders('CANCELLED')" id="tab-CANCELLED" class="text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap">Cancelled (16)</button>
+      </div>
+
+      <!-- SEARCH BAR -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div class="relative flex-1">
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" id="order-search" onkeyup="searchOrders()" placeholder="Search order_number, customer, or payment method..." class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-indigo-600">
+        </div>
+
+        <button onclick="alert('Exporting orders ledger to CSV...')" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Export CSV</span>
+        </button>
+      </div>
+
+      <!-- ORDERS TABLE WITH HORIZONTAL SCROLL -->
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-xs text-left min-w-[650px]">
+          <thead>
+            <tr class="border-y border-gray-100 bg-gray-50/60 text-[11px] font-semibold text-gray-500 uppercase">
+              <th class="py-2.5 px-3">Order Number</th>
+              <th class="py-2.5 px-3">Customer</th>
+              <th class="py-2.5 px-3">Branch</th>
+              <th class="py-2.5 px-3">Payment</th>
+              <th class="py-2.5 px-3">Status</th>
+              <th class="py-2.5 px-3 text-right">Total Amount</th>
+              <th class="py-2.5 px-3 text-right">Receipt</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody" class="divide-y divide-gray-100 font-medium">
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-bold text-indigo-600">#ORD-9982</td>
+              <td class="py-3 px-3">
+                <div class="font-bold text-gray-900">Sarah Jenkins</div>
+                <div class="text-[11px] text-gray-400">sarah.j@acme.org</div>
+              </td>
+              <td class="py-3 px-3 text-gray-600">BR-001 Main HQ</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">CARD (Stripe)</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">COMPLETED</span></td>
+              <td class="py-3 px-3 text-right font-bold text-gray-900">$420.00</td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="viewReceipt('#ORD-9982', 'Sarah Jenkins', 420.00, 'CARD')" class="px-2.5 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Receipt</button>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-bold text-indigo-600">#ORD-9981</td>
+              <td class="py-3 px-3">
+                <div class="font-bold text-gray-900">Marcus Vance</div>
+                <div class="text-[11px] text-gray-400">marcus@cybertech.com</div>
+              </td>
+              <td class="py-3 px-3 text-gray-600">BR-002 West Coast</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">CASH (POS)</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">COMPLETED</span></td>
+              <td class="py-3 px-3 text-right font-bold text-gray-900">$1,150.00</td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="viewReceipt('#ORD-9981', 'Marcus Vance', 1150.00, 'CASH')" class="px-2.5 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Receipt</button>
+              </td>
+            </tr>
+
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-bold text-indigo-600">#ORD-9980</td>
+              <td class="py-3 px-3">
+                <div class="font-bold text-gray-900">Elena Rostova</div>
+                <div class="text-[11px] text-gray-400">elena@rostova.io</div>
+              </td>
+              <td class="py-3 px-3 text-gray-600">BR-003 Downtown</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-[11px] font-bold">MOBILE_PAYMENT</span></td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-[11px] font-bold">PENDING</span></td>
+              <td class="py-3 px-3 text-right font-bold text-gray-900">$230.50</td>
+              <td class="py-3 px-3 text-right">
+                <button onclick="viewReceipt('#ORD-9980', 'Elena Rostova', 230.50, 'MOBILE_PAYMENT')" class="px-2.5 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Receipt</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- POS CHECKOUT INTERACTIVE MODAL -->
+  <div id="pos-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xs">POS</div>
+          <h2 class="text-base font-bold text-gray-900">New POS Checkout Transaction</h2>
+        </div>
+        <button onclick="closePosModal()" class="text-gray-400 hover:text-gray-600 text-lg">✕</button>
+      </div>
+
+      <form onsubmit="processPosOrder(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-gray-900 mb-1">Target Branch</label>
+          <select id="pos-branch" class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+            <option value="BR-001 Main HQ">BR-001: Main HQ Central Depot</option>
+            <option value="BR-002 West Coast">BR-002: West Coast Fulfilment</option>
+            <option value="BR-003 Downtown">BR-003: Downtown Outlet</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-900 mb-1">Select Customer</label>
+          <select id="pos-customer" class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+            <option value="Sarah Jenkins">CUST-1001: Sarah Jenkins (sarah.j@acme.org)</option>
+            <option value="Marcus Vance">CUST-1002: Marcus Vance (marcus@cybertech.com)</option>
+            <option value="Elena Rostova">CUST-1003: Elena Rostova (elena@rostova.io)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-gray-900 mb-1">Select Product SKU</label>
+          <select id="pos-product" onchange="updatePosCalc()" class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+            <option value="3499.00">SKU-8841-A: Quantum Edge AI Server ($3,499.00)</option>
+            <option value="99.00">SKU-9920-C: Wavespace Pro Seat ($99.00)</option>
+            <option value="249.50">SKU-7721-B: IoT Gateway Sensor ($249.50)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Quantity</label>
+            <input type="number" id="pos-qty" min="1" value="1" onchange="updatePosCalc()" class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+          </div>
+          <div>
+            <label class="block font-semibold text-gray-900 mb-1">Payment Method</label>
+            <select id="pos-method" class="w-full px-3 py-2 border border-gray-200 rounded-lg bg-white">
+              <option value="CASH">CASH</option>
+              <option value="CARD">CARD (Stripe)</option>
+              <option value="MOBILE_PAYMENT">MOBILE_PAYMENT</option>
+              <option value="BANK_TRANSFER">BANK_TRANSFER</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TOTAL CALCULATION BOX -->
+        <div class="bg-gray-50 border border-gray-200 p-3.5 rounded-xl space-y-1.5 text-xs">
+          <div class="flex justify-between text-gray-600"><span>Subtotal:</span><span id="pos-subtotal" class="font-bold text-gray-900">$3,499.00</span></div>
+          <div class="flex justify-between text-gray-600"><span>Tax (8%):</span><span id="pos-tax" class="font-bold text-gray-900">$279.92</span></div>
+          <div class="flex justify-between text-gray-900 font-bold border-t border-gray-200 pt-1 text-sm"><span>Total Due:</span><span id="pos-total" class="text-indigo-600">$3,778.92</span></div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition-colors">
+          Process POS Checkout &amp; Complete Order
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- RECEIPT MODAL -->
+  <div id="receipt-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative font-mono text-xs">
+      <div class="text-center border-b border-gray-200 pb-3 space-y-1">
+        <div class="font-bold text-sm text-gray-900">WAVESPACE BUSINESS OS</div>
+        <div class="text-[11px] text-gray-500">Official Branch Receipt (#RCP-88190)</div>
+      </div>
+
+      <div class="space-y-1 text-gray-700 text-[11px]">
+        <div>Order #: <strong id="rcp-ord" class="text-gray-900">#ORD-9982</strong></div>
+        <div>Customer: <strong id="rcp-cust" class="text-gray-900">Sarah Jenkins</strong></div>
+        <div>Payment Method: <strong id="rcp-method" class="text-gray-900">CARD</strong></div>
+        <div>Date: <strong>2026-09-26 20:30 UTC</strong></div>
+      </div>
+
+      <div class="border-y border-dashed border-gray-300 py-2 space-y-1 text-gray-900">
+        <div class="flex justify-between font-bold"><span>1x Item Purchase</span><span id="rcp-amount">$420.00</span></div>
+        <div class="flex justify-between text-gray-500 text-[10px]"><span>Tenant Tax (Included)</span><span>$31.11</span></div>
+      </div>
+
+      <div class="flex justify-between font-bold text-sm text-gray-900">
+        <span>TOTAL PAID:</span>
+        <span id="rcp-total-paid">$420.00</span>
+      </div>
+
+      <div class="pt-3 flex gap-2">
+        <button onclick="window.print()" class="flex-1 py-2 bg-indigo-600 text-white rounded-lg font-sans font-semibold text-xs">Print Receipt</button>
+        <button onclick="closeReceiptModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-sans font-semibold text-xs">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      sidebar.classList.toggle('-translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
+
+    function openPosModal() { document.getElementById('pos-modal').classList.remove('hidden'); }
+    function closePosModal() { document.getElementById('pos-modal').classList.add('hidden'); }
+    function closeReceiptModal() { document.getElementById('receipt-modal').classList.add('hidden'); }
+
+    function updatePosCalc() {
+      const price = parseFloat(document.getElementById('pos-product').value) || 0;
+      const qty = parseInt(document.getElementById('pos-qty').value) || 1;
+      const subtotal = price * qty;
+      const tax = subtotal * 0.08;
+      const total = subtotal + tax;
+
+      document.getElementById('pos-subtotal').innerText = '$' + subtotal.toFixed(2);
+      document.getElementById('pos-tax').innerText = '$' + tax.toFixed(2);
+      document.getElementById('pos-total').innerText = '$' + total.toFixed(2);
+    }
+
+    function processPosOrder(e) {
+      e.preventDefault();
+      const customer = document.getElementById('pos-customer').value;
+      const branch = document.getElementById('pos-branch').value;
+      const method = document.getElementById('pos-method').value;
+      const totalText = document.getElementById('pos-total').innerText;
+
+      const newOrdNum = '#ORD-' + Math.floor(1000 + Math.random() * 9000);
+
+      const newRow = `
+        <tr class="hover:bg-gray-50/80 bg-indigo-50/20">
+          <td class="py-3 px-3 font-bold text-indigo-600">${newOrdNum}</td>
+          <td class="py-3 px-3">
+            <div class="font-bold text-gray-900">${customer}</div>
+            <div class="text-[11px] text-gray-400">pos@acme.org</div>
+          </td>
+          <td class="py-3 px-3 text-gray-600">${branch}</td>
+          <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">${method}</span></td>
+          <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">COMPLETED</span></td>
+          <td class="py-3 px-3 text-right font-bold text-gray-900">${totalText}</td>
+          <td class="py-3 px-3 text-right">
+            <button onclick="viewReceipt('${newOrdNum}', '${customer}', '${totalText}', '${method}')" class="px-2.5 py-1 text-xs text-indigo-600 font-semibold hover:bg-indigo-50 rounded">Receipt</button>
+          </td>
+        </tr>
+      `;
+
+      document.getElementById('orders-tbody').insertAdjacentHTML('afterbegin', newRow);
+      closePosModal();
+      viewReceipt(newOrdNum, customer, totalText, method);
+    }
+
+    function viewReceipt(ord, cust, amt, method) {
+      document.getElementById('rcp-ord').innerText = ord;
+      document.getElementById('rcp-cust').innerText = cust;
+      document.getElementById('rcp-method').innerText = method;
+      document.getElementById('rcp-amount').innerText = typeof amt === 'number' ? '$' + amt.toFixed(2) : amt;
+      document.getElementById('rcp-total-paid').innerText = typeof amt === 'number' ? '$' + amt.toFixed(2) : amt;
+      document.getElementById('receipt-modal').classList.remove('hidden');
+    }
+
+    function filterOrders(status) {
+      ['ALL', 'PENDING', 'COMPLETED', 'CANCELLED'].forEach(s => {
+        const el = document.getElementById('tab-' + s);
+        if (el) {
+          if (s === status) {
+            el.className = 'text-indigo-600 font-semibold pb-3 border-b-2 border-indigo-600 whitespace-nowrap';
+          } else {
+            el.className = 'text-gray-500 hover:text-gray-900 pb-3 whitespace-nowrap';
+          }
+        }
+      });
+    }
+
+    function searchOrders() {
+      const q = document.getElementById('order-search').value.toLowerCase();
+      const rows = document.querySelectorAll('#orders-tbody tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to sign out of Business OS?')) {
+        window.location.href = 'login.html';
+      }
+    }
+  </script>
+</body>
+</html>

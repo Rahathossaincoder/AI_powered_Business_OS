@@ -1,0 +1,1534 @@
+================================================================================
+BUSINESS OS - COMPLETE DATABASE / ER DIAGRAM DOCUMENTATION
+================================================================================
+
+Purpose:
+This document defines the Phase 1 database entities, attributes, relationships,
+constraints, and ER-diagram drawing instructions for the Business OS MVP.
+
+MVP SCOPE
+---------
+1. Multi-tenant organizations
+2. Authentication
+3. Users and employees
+4. Roles and permissions
+5. Product catalog
+6. Inventory and inventory ledger
+7. Customers / CRM
+8. Orders and checkout
+9. Payments
+10. Invoices and receipts
+11. Dashboard/reporting data
+12. Read-only AI chatbot
+13. AI conversations and tool calls
+14. Notifications
+15. Organization settings
+16. Audit logging
+
+AI SCOPE FOR MVP
+-----------------
+The AI is a chatbot only.
+
+It is READ-ONLY in the MVP.
+It can query business information through controlled backend tools.
+
+It must NOT:
+- create orders
+- modify inventory
+- create products
+- delete customers
+- modify employees
+- modify organization settings
+- execute arbitrary SQL
+
+The AI uses business-level read tools such as:
+- get_sales_summary
+- get_sales_by_period
+- get_revenue_trend
+- get_top_products
+- get_product_sales
+- get_inventory_summary
+- get_low_stock_products
+- get_customer_summary
+- get_top_customers
+- get_order_summary
+- get_orders_by_status
+
+================================================================================
+1. ER DIAGRAM SYMBOLS
+================================================================================
+
+[Single Rectangle] = Strong Entity
+[Double Rectangle] = Weak / Associative Entity
+(PK, Underlined) = Primary Key
+(FK, Underlined with dotted line) = Foreign Key
+(FK, Unique) = Foreign Key + Unique
+(Simple) = Simple Attribute
+(Derived, Dotted underline) = Derived Attribute
+(Alternate Key) = Unique / Alternate Key
+═══ = Total Participation
+─── = Partial Participation
+◇ = Relationship
+◆ = Identifying Relationship
+
+For implementation, every organization-owned entity must contain
+organization_id and must be tenant-scoped by the backend.
+
+================================================================================
+2. ORGANIZATION
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  organization_id       (PK, Underlined)
+  name                  (Simple)
+  slug                  (Simple, Alternate Key)
+  business_type         (Simple)
+  email                 (Simple)
+  phone                 (Simple)
+  address_line1         (Simple)
+  address_line2         (Simple)
+  city                  (Simple)
+  state                 (Simple)
+  postal_code           (Simple)
+  country               (Simple)
+  currency              (Simple)
+  timezone              (Simple)
+  logo                  (Simple)
+  is_active             (Simple)
+  created_at            (Simple)
+  updated_at            (Simple)
+
+Relationships:
+  ◇ Has → Employee             (1:M)
+  ◇ Has → Role                 (1:M)
+  ◇ Has → Product              (1:M)
+  ◇ Has → Category             (1:M)
+  ◇ Has → Customer             (1:M)
+  ◇ Has → Order                (1:M)
+  ◇ Has → Inventory            (1:M)
+  ◇ Has → AIConversation        (1:M)
+  ◇ Has → Notification         (1:M)
+  ◇ Has → AuditLog             (1:M)
+  ◇ Has → OrganizationSetting  (1:M)
+
+
+================================================================================
+3. USER
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  user_id               (PK, Underlined)
+  email                 (Simple, Alternate Key)
+  password_hash         (Simple)
+  first_name            (Simple)
+  last_name             (Simple)
+  phone                 (Simple)
+  profile_picture       (Simple)
+  is_active             (Simple)
+  email_verified        (Simple)
+  last_login_at         (Simple)
+  created_at            (Simple)
+  updated_at            (Simple)
+
+Relationships:
+  ◇ Has → Employee                  (1:M)
+  ◇ Creates → Order                 (1:M)
+  ◇ Creates → InventoryTransaction  (1:M)
+  ◇ Starts → AIConversation          (1:M)
+  ◇ Receives → Notification          (1:M)
+  ◇ Performs → AuditLog              (1:M)
+
+
+================================================================================
+4. EMPLOYEE
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  employee_id            (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  user_id                (FK, Nullable, Underlined with dotted line)
+  role_id                (FK, Underlined with dotted line)
+  employee_code          (Simple, Alternate Key per Organization)
+  first_name             (Simple)
+  last_name              (Simple)
+  phone                  (Simple)
+  email                  (Simple)
+  job_title              (Simple)
+  status                 (Simple)
+  hire_date              (Simple)
+  avatar                 (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Relationships:
+  ◇ Belongs to → Organization             (M:1)
+  ◇ Uses account → User                    (M:1, Optional)
+  ◇ Has role → Role                        (M:1)
+  ◇ Creates → Order                        (1:M)
+  ◇ Creates → InventoryTransaction        (1:M)
+
+Recommended constraint:
+  UNIQUE(organization_id, employee_code)
+
+
+================================================================================
+5. ROLE
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  role_id                (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  name                   (Simple)
+  description            (Simple)
+  is_system_role         (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Relationships:
+  ◇ Belongs to → Organization     (M:1)
+  ◇ Assigned to → Employee        (1:M)
+  ◇ Has → Permission              (M:M through RolePermission)
+
+Initial example roles:
+  Admin
+  Manager
+  Cashier
+
+Custom roles should also be supported.
+
+
+================================================================================
+6. PERMISSION
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  permission_id          (PK, Underlined)
+  code                   (Simple, Alternate Key)
+  name                   (Simple)
+  description            (Simple)
+  module                 (Simple)
+  created_at             (Simple)
+
+Examples:
+  products.read
+  products.create
+  products.update
+  products.delete
+
+  inventory.read
+  inventory.adjust
+
+  customers.read
+  customers.create
+  customers.update
+
+  orders.read
+  orders.create
+  orders.cancel
+
+  employees.read
+  employees.create
+  employees.update
+
+  reports.read
+  ai.use
+
+Relationships:
+  ◇ Assigned to → Role (M:M through RolePermission)
+
+
+================================================================================
+7. ROLE_PERMISSION
+================================================================================
+
+Weak / Associative Entity [Double Rectangle]
+
+Attributes:
+  role_permission_id     (PK, Underlined)
+  role_id                (FK, Underlined with dotted line)
+  permission_id          (FK, Underlined with dotted line)
+  created_at             (Simple)
+
+Relationships:
+  ◆ Belongs to → Role             (M:1)
+  ◇ Grants → Permission           (M:1)
+
+Constraint:
+  UNIQUE(role_id, permission_id)
+
+
+================================================================================
+8. CATEGORY
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  category_id            (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  parent_id              (FK, Nullable, Self-referencing)
+  name                   (Simple)
+  slug                   (Simple)
+  description            (Simple)
+  image                  (Simple)
+  is_active               (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Relationships:
+  ◇ Belongs to → Organization       (M:1)
+  ◇ Contains → Product              (1:M)
+  ◇ Has subcategory → Category      (1:M, Self-referencing)
+
+Example:
+  Beverages
+    ├── Soft Drinks
+    ├── Water
+    └── Juice
+
+
+================================================================================
+9. PRODUCT
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  product_id             (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  category_id            (FK, Underlined with dotted line)
+  sku                    (Simple, Alternate Key per Organization)
+  name                   (Simple)
+  description            (Simple)
+  unit                   (Simple)
+  cost_price             (Simple)
+  selling_price          (Simple)
+  reorder_level          (Simple)
+  image                  (Simple)
+  is_active              (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Important:
+  Current stock is NOT the authoritative value here.
+  Current stock belongs to Inventory.
+
+Relationships:
+  ◇ Belongs to → Organization              (M:1)
+  ◇ Belongs to → Category                  (M:1)
+  ◇ Has → Inventory                        (1:1)
+  ◇ Has → InventoryTransaction             (1:M)
+  ◇ Appears in → OrderItem                 (1:M)
+
+Recommended constraint:
+  UNIQUE(organization_id, sku)
+
+
+================================================================================
+10. INVENTORY
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  inventory_id           (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  product_id             (FK, Unique, Underlined with dotted line)
+  quantity               (Simple)
+  reorder_level          (Simple)
+  updated_at             (Simple)
+
+Relationships:
+  ◇ Belongs to → Organization              (M:1)
+  ◇ Tracks → Product                        (1:1)
+  ◇ Has movements → InventoryTransaction   (1:M)
+
+Constraint:
+  UNIQUE(product_id)
+
+
+================================================================================
+11. INVENTORY_TRANSACTION
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+This is the inventory ledger.
+
+Attributes:
+  inventory_transaction_id   (PK, Underlined)
+  organization_id            (FK, Underlined with dotted line)
+  inventory_id               (FK, Underlined with dotted line)
+  product_id                 (FK, Underlined with dotted line)
+  transaction_type           (Simple)
+  quantity_change             (Simple)
+  quantity_before             (Simple)
+  quantity_after              (Simple)
+  reference_type              (Simple)
+  reference_id                (Simple)
+  reason                      (Simple)
+  note                        (Simple)
+  created_by_id               (FK, Underlined with dotted line)
+  created_at                  (Simple)
+
+Transaction types:
+  INITIAL_STOCK
+  PURCHASE
+  SALE
+  RETURN
+  ADJUSTMENT
+  DAMAGE
+  CORRECTION
+
+Example:
+  quantity_before = 50
+  quantity_change = -3
+  quantity_after  = 47
+  transaction_type = SALE
+  reference_type   = ORDER
+  reference_id     = 1024
+
+Relationships:
+  ◇ Belongs to → Organization        (M:1)
+  ◇ Belongs to → Inventory           (M:1)
+  ◇ References → Product             (M:1)
+  ◇ Created by → User                (M:1)
+
+
+================================================================================
+12. CUSTOMER
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  customer_id            (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  customer_code          (Simple, Alternate Key per Organization)
+  name                   (Simple)
+  phone                  (Simple)
+  email                  (Simple)
+  address_line1          (Simple)
+  address_line2          (Simple)
+  city                   (Simple)
+  state                  (Simple)
+  postal_code            (Simple)
+  country                (Simple)
+  notes                  (Simple)
+  is_active              (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Relationships:
+  ◇ Belongs to → Organization       (M:1)
+  ◇ Places → Order                  (1:M)
+
+Recommended constraint:
+  UNIQUE(organization_id, customer_code)
+
+
+================================================================================
+13. ORDER
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  order_id               (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  order_number           (Simple, Alternate Key per Organization)
+  customer_id            (FK, Nullable, Underlined with dotted line)
+  created_by_id           (FK, Underlined with dotted line)
+  status                 (Simple)
+  subtotal               (Derived, Dotted underline)
+  discount               (Simple)
+  tax                    (Simple)
+  total_amount           (Derived, Dotted underline)
+  notes                  (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+  completed_at           (Simple, Nullable)
+  cancelled_at           (Simple, Nullable)
+
+Statuses:
+  DRAFT
+  PENDING
+  COMPLETED
+  CANCELLED
+
+Relationships:
+  ◇ Belongs to → Organization        (M:1)
+  ◇ Placed by → Customer             (M:1, Optional)
+  ◇ Created by → Employee            (M:1)
+  ◇ Contains → OrderItem             (1:M)
+  ◇ Has → Payment                     (1:M)
+  ◇ Generates → Invoice               (1:1)
+
+Recommended constraint:
+  UNIQUE(organization_id, order_number)
+
+
+================================================================================
+14. ORDER_ITEM
+================================================================================
+
+Weak Entity [Double Rectangle]
+
+Attributes:
+  order_item_id          (PK, Underlined)
+  order_id               (FK, Underlined with dotted line)
+  product_id             (FK, Underlined with dotted line)
+  quantity               (Simple)
+  unit_price             (Simple)
+  discount               (Simple)
+  tax                    (Simple)
+  line_total             (Derived, Dotted underline)
+  created_at             (Simple)
+
+Important:
+  unit_price must be stored on the order item.
+  Historical orders must not change when the product price changes.
+
+Relationships:
+  ◆ Belongs to → Order                  (M:1)
+  ◇ References → Product                (M:1)
+
+
+================================================================================
+15. PAYMENT
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Use 1:M from Order to Payment to allow future:
+  - partial payments
+  - multiple payment methods
+  - split payments
+  - refunds
+
+Attributes:
+  payment_id             (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  order_id               (FK, Underlined with dotted line)
+  amount                 (Simple)
+  payment_method         (Simple)
+  status                 (Simple)
+  transaction_reference  (Simple)
+  payment_date           (Simple)
+  created_by_id          (FK, Underlined with dotted line)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Payment methods:
+  CASH
+  CARD
+  MOBILE_PAYMENT
+  BANK_TRANSFER
+  OTHER
+
+Relationships:
+  ◇ Belongs to → Organization       (M:1)
+  ◇ Belongs to → Order              (M:1)
+  ◇ Created by → Employee           (M:1)
+
+
+================================================================================
+16. INVOICE
+================================================================================
+
+Weak Entity [Double Rectangle]
+
+Attributes:
+  invoice_id             (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  order_id               (FK, Unique, Underlined with dotted line)
+  invoice_number         (Simple, Alternate Key per Organization)
+  status                 (Simple)
+  subtotal               (Simple)
+  discount               (Simple)
+  tax                    (Simple)
+  total_amount           (Simple)
+  pdf_file               (Simple)
+  issued_at              (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Invoice statuses:
+  DRAFT
+  ISSUED
+  PAID
+  VOID
+
+Relationships:
+  ◆ Generated from → Order          (1:1)
+  ◇ Belongs to → Organization      (M:1)
+  ◇ Has → Receipt                    (1:1)
+
+Recommended constraint:
+  UNIQUE(organization_id, invoice_number)
+
+
+================================================================================
+17. RECEIPT
+================================================================================
+
+Weak Entity [Double Rectangle]
+
+Attributes:
+  receipt_id             (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  invoice_id             (FK, Unique, Underlined with dotted line)
+  receipt_number         (Simple, Alternate Key per Organization)
+  receipt_type           (Simple)
+  file_path              (Simple)
+  print_status           (Simple)
+  generated_at           (Simple)
+  created_at             (Simple)
+
+Receipt types:
+  THERMAL
+  PDF
+  DIGITAL
+
+Relationships:
+  ◆ Generated from → Invoice         (1:1)
+  ◇ Belongs to → Organization        (M:1)
+
+Recommended constraint:
+  UNIQUE(organization_id, receipt_number)
+
+
+================================================================================
+18. AI_CONVERSATION
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Represents a chatbot conversation.
+
+Attributes:
+  conversation_id        (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  user_id                (FK, Underlined with dotted line)
+  title                  (Simple)
+  model_name             (Simple)
+  status                 (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Relationships:
+  ◇ Belongs to → Organization       (M:1)
+  ◇ Started by → User               (M:1)
+  ◇ Contains → AIMessage             (1:M)
+  ◇ Contains → AIToolCall            (1:M)
+
+
+================================================================================
+19. AI_MESSAGE
+================================================================================
+
+Weak Entity [Double Rectangle]
+
+Attributes:
+  message_id             (PK, Underlined)
+  conversation_id        (FK, Underlined with dotted line)
+  role                   (Simple)
+  content                (Simple)
+  sequence_number        (Simple)
+  token_count            (Simple, Nullable)
+  created_at             (Simple)
+
+Roles:
+  SYSTEM
+  USER
+  ASSISTANT
+  TOOL
+
+Relationships:
+  ◆ Belongs to → AIConversation       (M:1)
+
+
+================================================================================
+20. AI_TOOL_CALL
+================================================================================
+
+Weak Entity [Double Rectangle]
+
+Stores every tool call made by the AI.
+
+Attributes:
+  tool_call_id            (PK, Underlined)
+  conversation_id         (FK, Underlined with dotted line)
+  message_id              (FK, Nullable, Underlined with dotted line)
+  tool_name               (Simple)
+  arguments               (JSON)
+  result                  (JSON)
+  status                  (Simple)
+  execution_time_ms       (Simple)
+  created_at              (Simple)
+  completed_at            (Simple, Nullable)
+
+Statuses:
+  PENDING
+  SUCCESS
+  FAILED
+  REJECTED
+
+Relationships:
+  ◆ Belongs to → AIConversation       (M:1)
+  ◇ Triggered by → AIMessage         (M:1, Optional)
+
+
+================================================================================
+21. ORGANIZATION_SETTING
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Attributes:
+  setting_id             (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  key                    (Simple)
+  value                  (JSON)
+  description             (Simple)
+  created_at             (Simple)
+  updated_at             (Simple)
+
+Examples:
+  invoice_prefix
+  receipt_prefix
+  tax_rate
+  currency
+  timezone
+  low_stock_threshold
+  business_address
+  receipt_footer
+
+Constraint:
+  UNIQUE(organization_id, key)
+
+Relationships:
+  ◇ Belongs to → Organization        (M:1)
+
+
+================================================================================
+22. NOTIFICATION
+================================================================================
+
+Weak Entity [Double Rectangle]
+
+Attributes:
+  notification_id        (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  user_id                (FK, Underlined with dotted line)
+  title                  (Simple)
+  message                (Simple)
+  type                   (Simple)
+  is_read                (Simple)
+  created_at             (Simple)
+  read_at                (Simple, Nullable)
+
+Notification types:
+  LOW_STOCK
+  ORDER_CREATED
+  ORDER_COMPLETED
+  PAYMENT_RECEIVED
+  SYSTEM
+
+Relationships:
+  ◇ Belongs to → Organization        (M:1)
+  ◇ Sent to → User                   (M:1)
+
+
+================================================================================
+23. AUDIT_LOG
+================================================================================
+
+Strong Entity [Single Rectangle]
+
+Records who changed what.
+
+Attributes:
+  audit_log_id           (PK, Underlined)
+  organization_id        (FK, Underlined with dotted line)
+  user_id                (FK, Nullable, Underlined with dotted line)
+  employee_id            (FK, Nullable, Underlined with dotted line)
+  action                 (Simple)
+  entity_type            (Simple)
+  entity_id              (Simple)
+  old_values             (JSON, Nullable)
+  new_values             (JSON, Nullable)
+  metadata               (JSON, Nullable)
+  ip_address             (Simple, Nullable)
+  user_agent             (Simple, Nullable)
+  created_at             (Simple)
+
+Example actions:
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  ORDER_COMPLETED
+  INVENTORY_ADJUSTED
+  PAYMENT_RECORDED
+
+Relationships:
+  ◇ Belongs to → Organization        (M:1)
+  ◇ Performed by → User              (M:1, Optional)
+  ◇ Performed by → Employee          (M:1, Optional)
+
+
+================================================================================
+24. DATABASE-WIDE IMPORTANT CONSTRAINTS
+================================================================================
+
+1. Tenant isolation
+   -----------------
+   Every organization-owned record must be scoped by organization_id.
+
+2. Backend determines tenant
+   --------------------------
+   Never trust organization_id supplied by the frontend.
+
+3. Product SKU
+   ------------
+   UNIQUE(organization_id, sku)
+
+4. Employee code
+   --------------
+   UNIQUE(organization_id, employee_code)
+
+5. Customer code
+   --------------
+   UNIQUE(organization_id, customer_code)
+
+6. Order number
+   -------------
+   UNIQUE(organization_id, order_number)
+
+7. Invoice number
+   ---------------
+   UNIQUE(organization_id, invoice_number)
+
+8. Receipt number
+   ---------------
+   UNIQUE(organization_id, receipt_number)
+
+9. Organization setting
+   --------------------
+   UNIQUE(organization_id, key)
+
+10. Role permission
+    ----------------
+    UNIQUE(role_id, permission_id)
+
+11. Inventory
+    ---------
+    One inventory record per product:
+    UNIQUE(product_id)
+
+12. Invoice
+    -------
+    One invoice per order in MVP:
+    UNIQUE(order_id)
+
+13. Receipt
+    -------
+    One receipt record per invoice in MVP:
+    UNIQUE(invoice_id)
+
+14. Payment
+    --------
+    Multiple payments per order are allowed.
+
+15. Order item price
+    -----------------
+    unit_price is stored historically on OrderItem.
+
+16. Inventory ledger
+    -----------------
+    Every stock-changing operation must create an
+    InventoryTransaction.
+
+17. AI access
+    ----------
+    AI has read-only tools in MVP.
+
+18. Arbitrary SQL
+    --------------
+    AI must NOT receive arbitrary database execution privileges.
+
+
+================================================================================
+25. IMPORTANT BUSINESS RULES
+================================================================================
+
+ORDER COMPLETION
+----------------
+
+Complete Order must happen transactionally:
+
+  1. Validate order
+  2. Validate product availability
+  3. Validate stock
+  4. Create Order
+  5. Create OrderItems
+  6. Update Inventory
+  7. Create InventoryTransactions
+  8. Create Invoice
+  9. Create payment record if applicable
+ 10. Queue receipt/PDF generation
+ 11. Write AuditLog
+
+
+INVENTORY
+---------
+
+When stock changes:
+
+  quantity_before
+        +
+  quantity_change
+        =
+  quantity_after
+
+Never silently modify stock without an inventory transaction.
+
+
+AI
+--
+
+The AI does not directly access the database.
+
+Flow:
+
+  User
+    ↓
+  Chat UI
+    ↓
+  AI Gateway
+    ↓
+  Local LLM
+    ↓
+  Read-only business tool
+    ↓
+  Business Service
+    ↓
+  Tenant-scoped query
+    ↓
+  PostgreSQL
+    ↓
+  Structured result
+    ↓
+  LLM
+    ↓
+  User
+
+
+================================================================================
+26. ENTITY RELATIONSHIP SUMMARY
+================================================================================
+
+ORGANIZATION
+  ├── Employee
+  ├── Role
+  ├── Product
+  ├── Category
+  ├── Customer
+  ├── Order
+  ├── Inventory
+  ├── InventoryTransaction
+  ├── Payment
+  ├── Invoice
+  ├── Receipt
+  ├── AIConversation
+  ├── Notification
+  ├── OrganizationSetting
+  └── AuditLog
+
+USER
+  ├── Employee
+  ├── Order
+  ├── InventoryTransaction
+  ├── AIConversation
+  ├── Notification
+  └── AuditLog
+
+ROLE
+  └── RolePermission
+        └── Permission
+
+CATEGORY
+  └── Product
+
+PRODUCT
+  ├── Inventory
+  ├── InventoryTransaction
+  └── OrderItem
+
+INVENTORY
+  └── InventoryTransaction
+
+CUSTOMER
+  └── Order
+
+ORDER
+  ├── OrderItem
+  ├── Payment
+  └── Invoice
+        └── Receipt
+
+AIConversation
+  ├── AIMessage
+  └── AIToolCall
+
+ORGANIZATION
+  └── OrganizationSetting
+
+
+================================================================================
+27. MAIN RELATIONSHIPS FOR ER DRAWING
+================================================================================
+
+Organization 1 ──── M Employee
+Organization 1 ──── M Role
+Organization 1 ──── M Product
+Organization 1 ──── M Category
+Organization 1 ──── M Customer
+Organization 1 ──── M Order
+Organization 1 ──── M Inventory
+Organization 1 ──── M InventoryTransaction
+Organization 1 ──── M Payment
+Organization 1 ──── M Invoice
+Organization 1 ──── M Receipt
+Organization 1 ──── M AIConversation
+Organization 1 ──── M Notification
+Organization 1 ──── M OrganizationSetting
+Organization 1 ──── M AuditLog
+
+User 1 ──── M Employee
+User 1 ──── M Order
+User 1 ──── M InventoryTransaction
+User 1 ──── M AIConversation
+User 1 ──── M Notification
+User 1 ──── M AuditLog
+
+Role 1 ──── M Employee
+Role 1 ──── M RolePermission
+Permission 1 ──── M RolePermission
+
+Category 1 ──── M Product
+Category 1 ──── M Category (self-reference)
+
+Product 1 ──── 1 Inventory
+Product 1 ──── M InventoryTransaction
+Product 1 ──── M OrderItem
+
+Inventory 1 ──── M InventoryTransaction
+
+Customer 1 ──── M Order
+
+Employee 1 ──── M Order
+Employee 1 ──── M InventoryTransaction
+Employee 1 ──── M Payment
+
+Order 1 ──── M OrderItem
+Order 1 ──── M Payment
+Order 1 ──── 1 Invoice
+
+Invoice 1 ──── 1 Receipt
+
+AIConversation 1 ──── M AIMessage
+AIConversation 1 ──── M AIToolCall
+
+AIMessage 1 ──── M AIToolCall (optional relationship)
+
+Organization 1 ──── M OrganizationSetting
+
+
+================================================================================
+28. HOW TO DRAW THE ER DIAGRAM
+================================================================================
+
+Do NOT try to draw every entity in one giant crowded diagram.
+
+Create ONE logical master ER diagram and, if necessary, separate detailed
+diagrams for each module.
+
+Recommended diagram layout:
+
+                         ┌───────────────────┐
+                         │   ORGANIZATION     │
+                         └─────────┬─────────┘
+                                   │
+             ┌─────────────────────┼──────────────────────┐
+             │                     │                      │
+             ▼                     ▼                      ▼
+        USER / EMPLOYEE        PRODUCTS               CUSTOMERS
+             │                     │                      │
+             │                ┌────┴────┐                 │
+             │                ▼         ▼                 │
+             │            CATEGORY   INVENTORY             │
+             │                          │                  │
+             │                          ▼                  │
+             │                 INVENTORY_TRANSACTION       │
+             │                                             │
+             └──────────────────────┬──────────────────────┘
+                                    ▼
+                                  ORDER
+                                    │
+                    ┌───────────────┼───────────────┐
+                    ▼               ▼               ▼
+                ORDER_ITEM       PAYMENT          INVOICE
+                                                    │
+                                                    ▼
+                                                  RECEIPT
+
+
+                          ┌───────────────────────┐
+                          │     AI_CONVERSATION   │
+                          └───────────┬───────────┘
+                                      │
+                         ┌────────────┴────────────┐
+                         ▼                         ▼
+                    AI_MESSAGE                AI_TOOL_CALL
+
+
+                     ┌─────────────────────────────┐
+                     │      AUTHORIZATION          │
+                     │                             │
+                     │ Role ── RolePermission ── Permission
+                     │   │
+                     │   ▼
+                     │ Employee
+                     └─────────────────────────────┘
+
+
+================================================================================
+29. RECOMMENDED ER DIAGRAM DRAWING GROUPS
+================================================================================
+
+GROUP A — TENANT & AUTHORIZATION
+--------------------------------
+
+Organization
+User
+Employee
+Role
+Permission
+RolePermission
+
+Draw these together.
+
+Core relationships:
+
+Organization
+    │
+    ├──────── Employee
+    │             │
+    │             └──── Role
+    │                    │
+    │                    └──── RolePermission ──── Permission
+    │
+    └──────── User
+
+
+GROUP B — CATALOG & INVENTORY
+-----------------------------
+
+Organization
+Category
+Product
+Inventory
+InventoryTransaction
+
+Draw:
+
+Organization
+     │
+     ├──── Category
+     │       │
+     │       └──── Product
+     │                │
+     │                ├──── Inventory
+     │                │       │
+     │                │       └──── InventoryTransaction
+     │                │
+     │                └──── InventoryTransaction
+     │
+     └──── Product
+
+
+GROUP C — CRM & SALES
+---------------------
+
+Organization
+Customer
+Order
+OrderItem
+Product
+Employee
+Payment
+
+Draw:
+
+Customer ────── Order ────── OrderItem ────── Product
+                  │
+                  ├──────── Payment
+                  │
+                  └──────── Employee
+
+
+GROUP D — BILLING
+-----------------
+
+Order
+Invoice
+Receipt
+
+Draw:
+
+Order
+  │
+  ▼
+Invoice
+  │
+  ▼
+Receipt
+
+
+GROUP E — AI
+------------
+
+Organization
+User
+AIConversation
+AIMessage
+AIToolCall
+
+Draw:
+
+Organization
+     │
+     ▼
+AIConversation
+     │
+     ├──── AIMessage
+     │
+     └──── AIToolCall
+
+
+GROUP F — SYSTEM
+-----------------
+
+Organization
+OrganizationSetting
+Notification
+AuditLog
+User
+Employee
+
+Draw:
+
+Organization
+    │
+    ├──── OrganizationSetting
+    ├──── Notification ──── User
+    └──── AuditLog
+             │
+             ├──── User
+             └──── Employee
+
+
+================================================================================
+30. HOW TO REPRESENT ATTRIBUTES IN THE DIAGRAM
+================================================================================
+
+For each entity, draw the entity as a rectangle.
+
+Inside or attached to it, list attributes.
+
+Example:
+
+       ┌──────────────────────────────┐
+       │          PRODUCT             │
+       ├──────────────────────────────┤
+       │ PK product_id                │
+       │ FK organization_id           │
+       │ FK category_id               │
+       │    sku                       │
+       │    name                      │
+       │    description               │
+       │    unit                      │
+       │    cost_price                │
+       │    selling_price             │
+       │    reorder_level             │
+       │    image                     │
+       │    is_active                 │
+       │    created_at                │
+       │    updated_at                │
+       └──────────────────────────────┘
+
+
+For a weak entity:
+
+       ╔══════════════════════════════╗
+       ║         ORDER_ITEM          ║
+       ╠══════════════════════════════╣
+       ║ PK order_item_id            ║
+       ║ FK order_id                 ║
+       ║ FK product_id               ║
+       ║    quantity                 ║
+       ║    unit_price               ║
+       ║    discount                 ║
+       ║    tax                      ║
+       ║    line_total               ║
+       ║    created_at               ║
+       ╚══════════════════════════════╝
+
+
+================================================================================
+31. CARDINALITY RULES FOR DRAWING
+================================================================================
+
+Use crow's-foot or equivalent notation if the diagramming tool supports it.
+
+Core cardinalities:
+
+Organization 1 ─── M Employee
+Organization 1 ─── M Role
+Organization 1 ─── M Product
+Organization 1 ─── M Category
+Organization 1 ─── M Customer
+Organization 1 ─── M Order
+
+Role 1 ─── M Employee
+Role M ─── M Permission through RolePermission
+
+Category 1 ─── M Product
+Category 1 ─── M Category
+
+Product 1 ─── 1 Inventory
+Product 1 ─── M InventoryTransaction
+Product 1 ─── M OrderItem
+
+Customer 1 ─── M Order
+Employee 1 ─── M Order
+
+Order 1 ─── M OrderItem
+Order 1 ─── M Payment
+Order 1 ─── 1 Invoice
+
+Invoice 1 ─── 1 Receipt
+
+AIConversation 1 ─── M AIMessage
+AIConversation 1 ─── M AIToolCall
+
+
+================================================================================
+32. OPTIONAL / REQUIRED PARTICIPATION
+================================================================================
+
+Required examples:
+
+Employee → Organization
+Product → Organization
+Product → Category
+Inventory → Product
+OrderItem → Order
+OrderItem → Product
+Invoice → Order
+Receipt → Invoice
+AIMessage → AIConversation
+AIToolCall → AIConversation
+
+Optional examples:
+
+Employee → User
+Order → Customer
+AI Tool Call → AI Message
+AuditLog → User
+AuditLog → Employee
+
+
+================================================================================
+33. DATABASE TABLE LIST
+================================================================================
+
+1.  organizations
+2.  users
+3.  employees
+4.  roles
+5.  permissions
+6.  role_permissions
+7.  categories
+8.  products
+9.  inventory
+10. inventory_transactions
+11. customers
+12. orders
+13. order_items
+14. payments
+15. invoices
+16. receipts
+17. ai_conversations
+18. ai_messages
+19. ai_tool_calls
+20. organization_settings
+21. notifications
+22. audit_logs
+
+
+================================================================================
+34. FINAL DATABASE ARCHITECTURE
+================================================================================
+
+                         ORGANIZATION
+                              │
+          ┌───────────────────┼────────────────────┐
+          │                   │                    │
+          ▼                   ▼                    ▼
+        USERS             EMPLOYEES              ROLES
+          │                   │                    │
+          │                   └────────────┐       │
+          │                                ▼       ▼
+          │                               ROLE_PERMISSION
+          │                                      │
+          │                                      ▼
+          │                                  PERMISSION
+          │
+          ├────────────── AI_CONVERSATION
+          │                     │
+          │              ┌──────┴──────┐
+          │              ▼             ▼
+          │         AI_MESSAGE    AI_TOOL_CALL
+          │
+          ├────────────── NOTIFICATION
+          │
+          └────────────── AUDIT_LOG
+
+
+                         ORGANIZATION
+                              │
+                 ┌────────────┴────────────┐
+                 ▼                         ▼
+             CATEGORY                   CUSTOMER
+                 │                         │
+                 ▼                         ▼
+              PRODUCT                    ORDER
+                 │                    ┌────┼────┐
+                 │                    │    │    │
+          ┌──────┴──────┐             ▼    ▼    ▼
+          ▼             ▼        ORDER_ITEM PAYMENT INVOICE
+      INVENTORY   INVENTORY_TX       │             │
+          │             ▲           │             ▼
+          └─────────────┘           │          RECEIPT
+                                    │
+                                    ▼
+                                  PRODUCT
+
+
+================================================================================
+35. IMPLEMENTATION PRIORITY
+================================================================================
+
+Build database migrations in this order:
+
+PHASE 1:
+  organizations
+  users
+
+PHASE 2:
+  roles
+  permissions
+  role_permissions
+  employees
+
+PHASE 3:
+  categories
+  products
+
+PHASE 4:
+  inventory
+  inventory_transactions
+
+PHASE 5:
+  customers
+
+PHASE 6:
+  orders
+  order_items
+  payments
+
+PHASE 7:
+  invoices
+  receipts
+
+PHASE 8:
+  organization_settings
+  notifications
+  audit_logs
+
+PHASE 9:
+  ai_conversations
+  ai_messages
+  ai_tool_calls
+
+
+================================================================================
+36. IMPORTANT DESIGN PRINCIPLE
+================================================================================
+
+The database is the source of truth.
+
+Business logic belongs in backend services.
+
+The AI is a consumer of read-only business services.
+
+The dependency direction should be:
+
+    Frontend
+       ↓
+    Backend API
+       ↓
+    Business Services
+       ↓
+    PostgreSQL
+
+AI:
+
+    Chat UI
+       ↓
+    AI Gateway
+       ↓
+    Local LLM
+       ↓
+    Read-only Business Tools
+       ↓
+    Business Services
+       ↓
+    PostgreSQL
+
+Do NOT build:
+
+    AI → arbitrary SQL → PostgreSQL
+
+Build:
+
+    AI → controlled tool → business service → tenant-scoped query
+
+
+================================================================================
+END OF BUSINESS OS DATABASE / ER DIAGRAM DOCUMENTATION
+================================================================================

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overview Dashboard - Business OS / Wavespace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f3f4f6] text-gray-900 antialiased">
+
+  <!-- MOBILE TOP BAR -->
+  <div class="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+    <div class="flex items-center gap-2.5">
+      <button onclick="toggleMobileSidebar()" class="p-1.5 text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">W</div>
+      <span class="font-bold text-gray-900 text-sm">Wavespace OS</span>
+    </div>
+    <div class="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[11px]">SM</div>
+  </div>
+
+  <!-- BACKDROP OVERLAY FOR MOBILE -->
+  <div id="mobile-backdrop" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity"></div>
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 p-4 select-none z-40 overflow-y-auto">
+    <div class="space-y-6">
+      
+      <!-- WORKSPACE SELECTOR -->
+      <div class="flex items-center justify-between p-2.5 bg-white border border-gray-200 rounded-xl shadow-xs cursor-pointer hover:bg-gray-50 transition-colors">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-xs">
+            W
+          </div>
+          <span class="font-semibold text-gray-900 text-sm">Wavespace OS</span>
+        </div>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+        </svg>
+      </div>
+
+      <!-- NAVIGATION MENU -->
+      <nav class="space-y-1 text-sm font-medium">
+        <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2 text-gray-900 bg-gray-100/80 font-semibold rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+          <span>Overview</span>
+        </a>
+
+        <a href="ai-analyst.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span>AI Analyst (Read-Only)</span>
+        </a>
+
+        <a href="products.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+          <span>Products &amp; Categories</span>
+        </a>
+
+        <a href="inventory.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span>Inventory Ledger</span>
+        </a>
+
+        <a href="customers.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span>Customers CRM</span>
+        </a>
+
+        <a href="orders.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          <span>Orders &amp; POS</span>
+        </a>
+
+        <a href="settings.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <span>Employees &amp; Roles</span>
+        </a>
+
+        <a href="audit-logs.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span>Audit Logs</span>
+        </a>
+
+        <a href="billing.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          </svg>
+          <span>Org Settings &amp; Billing</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- USER PROFILE -->
+    <div class="space-y-3 pt-4 border-t border-gray-100 text-sm">
+      <div class="flex items-center justify-between gap-3 p-2 rounded-xl bg-gray-50 border border-gray-200/80">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0">
+            SM
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-gray-900 truncate">Shahid Miah</div>
+            <div class="text-[11px] text-gray-500 truncate">shahid@wavespace.io</div>
+          </div>
+        </div>
+        <button onclick="logout()" title="Sign Out of Business OS" class="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT WRAPPER -->
+  <main class="md:ml-64 flex-1 min-w-0 p-4 sm:p-6 md:p-8 space-y-6">
+
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Overview Dashboard</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Real-time multi-branch performance analytics, revenue insights, and system status.</p>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <button onclick="alert('Filtering by timeframe...')" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50">
+          <span>Last 30 Days</span>
+          <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+
+        <button onclick="alert('Exporting executive dashboard summary...')" class="inline-flex items-center gap-2 px-3.5 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-2xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>Export Overview</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI STAT CARDS GRID (4 CARDS) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between text-xs font-medium text-gray-500">
+          <span>Gross Revenue</span>
+          <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold">+14.2%</span>
+        </div>
+        <div class="text-2xl font-bold text-gray-900">$284,950.00</div>
+        <div class="text-[11px] text-gray-400">vs. $249,400.00 last month</div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between text-xs font-medium text-gray-500">
+          <span>Total Orders</span>
+          <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold">+8.6%</span>
+        </div>
+        <div class="text-2xl font-bold text-gray-900">1,842</div>
+        <div class="text-[11px] text-gray-400">1,696 orders completed</div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between text-xs font-medium text-gray-500">
+          <span>Avg Order Value</span>
+          <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold">+2.3%</span>
+        </div>
+        <div class="text-2xl font-bold text-gray-900">$154.70</div>
+        <div class="text-[11px] text-gray-400">Increased cart conversions</div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-5 space-y-2 shadow-xs">
+        <div class="flex items-center justify-between text-xs font-medium text-gray-500">
+          <span>AI Fanout Queries</span>
+          <span class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full font-semibold">+24.1%</span>
+        </div>
+        <div class="text-2xl font-bold text-gray-900">4,920</div>
+        <div class="text-[11px] text-gray-400">Across ChatGPT &amp; Perplexity</div>
+      </div>
+
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- REVENUE & TRAFFIC TREND CHART -->
+      <div class="lg:col-span-8 bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-base font-bold text-gray-900">Revenue &amp; Fanout Trends</h2>
+            <p class="text-xs text-gray-500">Weekly comparison of financial growth and search index volume</p>
+          </div>
+          <div class="flex items-center gap-4 text-xs font-medium text-gray-600">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-indigo-600 rounded-full inline-block"></span>Revenue ($)</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-teal-500 rounded-full inline-block"></span>Queries</span>
+          </div>
+        </div>
+
+        <div class="h-64 w-full relative pt-4">
+          <svg class="w-full h-full" viewBox="0 0 600 200" preserveAspectRatio="none">
+            <line x1="0" y1="20" x2="600" y2="20" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="0" y1="70" x2="600" y2="70" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="0" y1="120" x2="600" y2="120" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="0" y1="170" x2="600" y2="170" stroke="#f1f5f9" stroke-width="1"/>
+
+            <defs>
+              <linearGradient id="indigoGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.0"/>
+              </linearGradient>
+            </defs>
+
+            <path d="M 0 160 Q 100 90, 200 110 T 400 40 T 600 30 L 600 170 L 0 170 Z" fill="url(#indigoGradient)"/>
+            <path d="M 0 160 Q 100 90, 200 110 T 400 40 T 600 30" fill="none" stroke="#4f46e5" stroke-width="3"/>
+            <path d="M 0 140 Q 100 130, 200 80 T 400 90 T 600 60" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-dasharray="4 4"/>
+          </svg>
+        </div>
+
+        <div class="flex justify-between text-xs text-gray-400 border-t border-gray-100 pt-3">
+          <span>Week 1</span>
+          <span>Week 2</span>
+          <span>Week 3</span>
+          <span>Week 4</span>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY SUMMARY -->
+      <div class="lg:col-span-4 bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-xs flex flex-col justify-between">
+        <div>
+          <h2 class="text-base font-bold text-gray-900">System Activity</h2>
+          <p class="text-xs text-gray-500">Live operational events &amp; inventory updates</p>
+
+          <div class="mt-4 space-y-4 text-xs">
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold shrink-0">✓</div>
+              <div>
+                <div class="font-semibold text-gray-900">Order #ORD-9982 Completed</div>
+                <div class="text-[11px] text-gray-400">Payment of $420.00 confirmed via Stripe</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">2 minutes ago</div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shrink-0">🤖</div>
+              <div>
+                <div class="font-semibold text-gray-900">AI Prompt Index Refreshed</div>
+                <div class="text-[11px] text-gray-400">14 new query fanouts captured for ChatGPT</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">14 minutes ago</div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center font-bold shrink-0">!</div>
+              <div>
+                <div class="font-semibold text-gray-900">Low Stock Alert: SKU-8841-A</div>
+                <div class="text-[11px] text-gray-400">Only 3 units remaining in Main Depot</div>
+                <div class="text-[10px] text-gray-400 mt-0.5">1 hour ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a href="ai-analyst.html" class="block text-center py-2.5 bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-indigo-600 rounded-xl transition-colors mt-4">
+          Open Answer Engine Insights →
+        </a>
+      </div>
+
+    </div>
+
+    <!-- RECENT ORDERS TABLE WITH HORIZONTAL SCROLL -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 space-y-4 shadow-xs">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-gray-900">Recent Customer Orders</h2>
+        <a href="orders.html" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700">View All Orders →</a>
+      </div>
+
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-xs text-left min-w-[550px]">
+          <thead>
+            <tr class="border-y border-gray-100 bg-gray-50/60 text-[11px] font-semibold text-gray-500 uppercase">
+              <th class="py-2.5 px-3">Order ID</th>
+              <th class="py-2.5 px-3">Customer</th>
+              <th class="py-2.5 px-3">Date</th>
+              <th class="py-2.5 px-3">Status</th>
+              <th class="py-2.5 px-3 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 font-medium">
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-bold text-indigo-600">#ORD-9982</td>
+              <td class="py-3 px-3 font-semibold text-gray-900">Sarah Jenkins</td>
+              <td class="py-3 px-3 text-gray-500">2026-09-26</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">Paid</span></td>
+              <td class="py-3 px-3 text-right font-bold text-gray-900">$420.00</td>
+            </tr>
+
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-bold text-indigo-600">#ORD-9981</td>
+              <td class="py-3 px-3 font-semibold text-gray-900">Marcus Vance</td>
+              <td class="py-3 px-3 text-gray-500">2026-09-26</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-bold">Paid</span></td>
+              <td class="py-3 px-3 text-right font-bold text-gray-900">$1,150.00</td>
+            </tr>
+
+            <tr class="hover:bg-gray-50/80">
+              <td class="py-3 px-3 font-bold text-indigo-600">#ORD-9980</td>
+              <td class="py-3 px-3 font-semibold text-gray-900">Elena Rostova</td>
+              <td class="py-3 px-3 text-gray-500">2026-09-25</td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-[11px] font-bold">Pending</span></td>
+              <td class="py-3 px-3 text-right font-bold text-gray-900">$230.50</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      sidebar.classList.toggle('-translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to sign out of Business OS?')) {
+        window.location.href = 'login.html';
+      }
+    }
+  </script>
+</body>
+</html>

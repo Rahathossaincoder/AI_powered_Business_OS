@@ -1,0 +1,1425 @@
+AI BUSINESS OS — COMPLETE STATIC FRONTEND BUILD COMMANDS
+===============================================================
+
+IMPORTANT GLOBAL RULE
+---------------------
+Build ONLY the static frontend.
+
+Use Tailwind CSS ONLY for styling.
+
+STRICT TECHNOLOGY RULES:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Lucide React for icons
+- Nothing else for UI/styling
+- NO Bootstrap
+- NO Material UI
+- NO Chakra UI
+- NO Ant Design
+- NO shadcn/ui
+- NO DaisyUI
+- NO Flowbite
+- NO prebuilt UI/component library
+- NO custom CSS framework
+- NO CSS-in-JS
+- NO styled-components
+- NO Sass/SCSS
+- NO LESS
+- NO external UI templates
+- NO component library
+- NO CSS files for component styling
+- Do not use inline style={{...}} for styling
+- Do not use <style> blocks
+- Do not create custom CSS classes for visual styling
+- Use Tailwind utility classes directly in JSX/TSX
+- Tailwind responsive utilities must be used for responsiveness
+- Tailwind dark-mode utilities may be used if dark mode is implemented
+- Use Lucide React only for icons
+- Use mock/static data only
+- NO backend
+- NO Django
+- NO Django REST Framework
+- NO database
+- NO authentication backend
+- NO API calls
+- NO external business data
+- NO AI API
+- NO Ollama
+- NO OpenAI API
+- NO RAG implementation
+- NO ML implementation
+- NO autonomous agent implementation
+
+The result must be a polished static SaaS Business Operating System frontend
+that can later connect to Django + DRF without redesigning the frontend.
+
+===============================================================
+COMMAND 01 — SCAFFOLD THE PROJECT
+===============================================================
+
+Build a complete React + TypeScript + Vite frontend.
+
+Requirements:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Lucide React
+- Responsive from the beginning
+- Type-safe architecture
+
+The application must run with:
+
+npm install
+npm run dev
+
+and build with:
+
+npm run build
+
+Do not leave the application as a starter template.
+
+Create the application structure needed for the entire Business OS.
+
+===============================================================
+COMMAND 02 — APPLICATION SHELL
+===============================================================
+
+Create the complete application shell.
+
+Desktop:
+- left sidebar
+- top header
+- main content area
+- optional contextual right panel
+
+Mobile:
+- mobile top bar
+- hamburger menu
+- slide-in sidebar/drawer
+- overlay
+- close button
+
+Sidebar navigation:
+
+Dashboard
+
+Business
+- Products
+- Categories
+- Inventory
+- Inventory Transactions
+- Customers
+- Orders
+- Billing
+- Payments
+- Invoices
+- Receipts
+
+Analytics
+- Reports
+- Sales Analytics
+- Inventory Analytics
+- Customer Analytics
+- Product Analytics
+
+Organization
+- Employees
+- Roles
+- Permissions
+
+AI
+- AI Business Analyst
+- AI Conversations
+
+System
+- Notifications
+- Audit Logs
+- Settings
+
+Include:
+- active navigation state
+- icons
+- tooltips for icon-only mobile/compact controls
+- user profile section
+- organization name
+- collapse behavior where appropriate
+
+Use Tailwind CSS utilities ONLY.
+
+===============================================================
+COMMAND 03 — ROUTING
+===============================================================
+
+Create these routes:
+
+/login
+/forgot-password
+
+/dashboard
+
+/products
+/products/new
+/products/:id
+/products/:id/edit
+
+/categories
+
+/inventory
+/inventory/transactions
+/inventory/adjustments
+
+/customers
+/customers/:id
+
+/orders
+/orders/new
+/orders/:id
+
+/billing
+/billing/invoices
+/billing/invoices/:id
+/billing/payments
+/billing/receipts
+
+/reports
+/reports/sales
+/reports/inventory
+/reports/customers
+/reports/products
+
+/ai
+/ai/:conversationId
+
+/employees
+/employees/:id
+
+/roles
+/permissions
+
+/notifications
+
+/audit-logs
+
+/settings
+/settings/general
+/settings/business
+/settings/invoice
+/settings/receipt
+/settings/ai
+/settings/security
+/settings/notifications
+
+Every route must have a real UI.
+Do not create blank placeholder pages.
+
+===============================================================
+COMMAND 04 — DESIGN SYSTEM
+===============================================================
+
+Create a consistent visual language using Tailwind utility classes ONLY.
+
+Do NOT create a custom CSS design system.
+
+Use Tailwind classes directly.
+
+Create reusable React components for:
+
+- Button
+- IconButton
+- Card
+- Badge
+- Input
+- Textarea
+- Select
+- Checkbox
+- Switch
+- Modal
+- Drawer
+- Dropdown
+- Tabs
+- Tooltip
+- Toast
+- Alert
+- DataTable
+- Pagination
+- SearchInput
+- FilterBar
+- DateRangeSelector
+- EmptyState
+- ErrorState
+- LoadingState
+- Skeleton
+- ConfirmDialog
+- Breadcrumb
+- PageHeader
+- StatCard
+- ChartCard
+
+All visual styling must be Tailwind utility classes.
+
+===============================================================
+COMMAND 05 — DASHBOARD
+===============================================================
+
+Build a complete Business OS dashboard.
+
+Header:
+- Dashboard title
+- organization selector
+- date range selector
+- search
+- notification button
+- profile menu
+
+KPI cards:
+- Total Revenue
+- Total Orders
+- Total Customers
+- Low Stock Products
+
+Each card:
+- icon
+- current value
+- comparison percentage
+- comparison period
+- trend indicator
+- responsive layout
+
+Revenue Overview:
+- revenue trend visualization
+- orders trend
+- daily/weekly/monthly selector
+
+Sales Overview:
+- completed orders
+- pending orders
+- cancelled orders
+- total orders
+
+Top Products:
+- product
+- SKU
+- units sold
+- revenue
+- trend
+
+Inventory Alerts:
+- low-stock products
+- current stock
+- reorder level
+- status
+- action
+
+Recent Orders:
+- order number
+- customer
+- amount
+- status
+- date
+
+Recent Customers:
+- customer
+- orders
+- total spent
+- last purchase
+
+AI Business Insight:
+- insight title
+- explanation
+- relevant metric
+- recommendation
+- "Ask AI" action
+
+Use realistic static mock data.
+
+===============================================================
+COMMAND 06 — PRODUCTS
+===============================================================
+
+Products list:
+
+- page header
+- Add Product
+- search
+- category filter
+- status filter
+- price filter
+- grid/table toggle
+- product table
+- pagination
+
+Columns:
+- Product
+- SKU
+- Category
+- Cost Price
+- Selling Price
+- Stock
+- Reorder Level
+- Status
+- Actions
+
+Product detail page:
+- product image
+- product information
+- SKU
+- category
+- description
+- pricing
+- inventory summary
+- sales summary
+- recent inventory transactions
+- recent orders
+
+Product create/edit page:
+- name
+- SKU
+- category
+- description
+- unit
+- cost price
+- selling price
+- reorder level
+- image
+- active status
+
+Add:
+- form validation
+- error states
+- success toast
+- cancel confirmation when necessary
+
+===============================================================
+COMMAND 07 — CATEGORIES
+===============================================================
+
+Build category management.
+
+Include:
+- category list
+- category hierarchy
+- parent category
+- child categories
+- category search
+- active/inactive status
+- create category
+- edit category
+- delete confirmation
+- empty state
+
+Support nested categories visually.
+
+===============================================================
+COMMAND 08 — INVENTORY
+===============================================================
+
+Inventory dashboard:
+
+KPI:
+- Total Inventory Value
+- Total Products
+- Low Stock
+- Out of Stock
+
+Inventory table:
+- Product
+- SKU
+- Quantity
+- Reorder Level
+- Status
+- Inventory Value
+- Last Updated
+- Actions
+
+Inventory statuses:
+- In Stock
+- Low Stock
+- Out of Stock
+
+Inventory transactions:
+
+Columns:
+- Date
+- Product
+- Transaction Type
+- Quantity Change
+- Quantity Before
+- Quantity After
+- Reference
+- Reason
+- Created By
+
+Transaction types:
+- INITIAL_STOCK
+- PURCHASE
+- SALE
+- RETURN
+- ADJUSTMENT
+- DAMAGE
+- CORRECTION
+
+Inventory adjustment modal:
+- product
+- adjustment type
+- quantity
+- reason
+- note
+- confirmation
+
+===============================================================
+COMMAND 09 — CUSTOMERS
+===============================================================
+
+Customer list:
+
+- customer code
+- name
+- phone
+- email
+- total orders
+- total spent
+- last purchase
+- status
+- actions
+
+Customer profile:
+- customer information
+- phone
+- email
+- address
+- notes
+- total orders
+- total spent
+- order history
+- recent activity
+
+Customer create/edit modal or page.
+
+Include:
+- search
+- filters
+- pagination
+- empty state
+- loading state
+- error state
+
+===============================================================
+COMMAND 10 — ORDERS
+===============================================================
+
+Orders list:
+
+Columns:
+- Order Number
+- Customer
+- Amount
+- Payment Status
+- Order Status
+- Created By
+- Date
+- Actions
+
+Filters:
+- status
+- payment status
+- customer
+- date range
+
+Order statuses:
+- DRAFT
+- PENDING
+- COMPLETED
+- CANCELLED
+
+Order detail:
+- order header
+- customer
+- order status
+- order timeline
+- order items
+- product
+- quantity
+- unit price
+- discount
+- tax
+- line total
+- subtotal
+- discount
+- tax
+- total
+- payments
+- invoice
+- notes
+- status history
+
+Order creation:
+- customer selection
+- product search
+- cart/order items
+- quantity controls
+- pricing
+- discount
+- tax
+- totals
+- payment method
+- notes
+- create order
+
+Make the order UI feel like a real POS/ERP system.
+
+===============================================================
+COMMAND 11 — BILLING
+===============================================================
+
+Billing dashboard:
+- total invoiced
+- paid
+- pending
+- overdue
+
+Invoices:
+- invoice number
+- order number
+- customer
+- amount
+- status
+- issue date
+- actions
+
+Invoice detail:
+- business information
+- customer information
+- invoice number
+- dates
+- items
+- subtotal
+- discount
+- tax
+- total
+- payment status
+- payment history
+
+Include:
+- professional invoice preview
+- print button
+- download button UI
+- send button UI
+
+Payments:
+- payment list
+- amount
+- payment method
+- transaction reference
+- status
+- date
+- order
+
+Payment methods:
+- CASH
+- CARD
+- MOBILE_PAYMENT
+- BANK_TRANSFER
+- OTHER
+
+Receipts:
+- digital receipt
+- PDF-style receipt preview
+- thermal receipt preview
+- print UI
+
+===============================================================
+COMMAND 12 — REPORTS
+===============================================================
+
+Build complete reporting pages.
+
+Reports dashboard:
+- revenue
+- orders
+- customers
+- products
+- inventory
+
+Sales report:
+- revenue trend
+- order trend
+- average order value
+- sales by product
+- sales by category
+- sales by date
+
+Inventory report:
+- inventory value
+- low stock
+- out of stock
+- inventory movement
+- fast-moving products
+- slow-moving products
+
+Customer report:
+- total customers
+- new customers
+- repeat customers
+- top customers
+- customer spending
+
+Product report:
+- top products
+- slow products
+- units sold
+- revenue
+- estimated profit
+
+Every report needs:
+- date range
+- filters
+- summary cards
+- visualization
+- table
+- export UI
+
+Charts must be built without adding a chart/UI framework.
+
+Use simple Tailwind-based visualizations such as:
+- bars
+- progress indicators
+- SVG-based visualizations if needed
+
+Do not install another UI library.
+
+===============================================================
+COMMAND 13 — EMPLOYEES
+===============================================================
+
+Employee list:
+- employee
+- employee code
+- role
+- job title
+- status
+- hire date
+- last activity
+- actions
+
+Employee detail:
+- personal information
+- organization information
+- role
+- permissions
+- activity
+- order activity
+- inventory activity
+
+Create/edit employee UI.
+
+Statuses:
+- ACTIVE
+- INACTIVE
+- SUSPENDED
+
+===============================================================
+COMMAND 14 — ROLES AND PERMISSIONS
+===============================================================
+
+Roles page:
+- role list
+- role description
+- system/custom role
+- employee count
+- actions
+
+Role detail:
+- permission matrix
+
+Permissions grouped by:
+
+Products
+Inventory
+Customers
+Orders
+Billing
+Reports
+Employees
+AI
+Settings
+
+Example permissions:
+
+products.read
+products.create
+products.update
+products.delete
+
+inventory.read
+inventory.adjust
+
+customers.read
+customers.create
+customers.update
+
+orders.read
+orders.create
+orders.cancel
+
+employees.read
+employees.create
+employees.update
+
+reports.read
+
+ai.use
+
+settings.read
+settings.update
+
+Create a polished permission matrix UI.
+
+===============================================================
+COMMAND 15 — AI BUSINESS ANALYST
+===============================================================
+
+Build a premium AI Business Analyst workspace.
+
+Route:
+/ai
+
+Left panel:
+- New Conversation
+- search conversations
+- recent conversations
+- conversation title
+- timestamps
+- archive
+- delete
+
+Main area:
+- AI Business Analyst header
+- model indicator
+- local/online indicator
+- conversation actions
+
+Welcome screen:
+
+"Ask questions about your business."
+
+Suggested prompts:
+
+"What were my sales this month?"
+
+"Which products are selling fastest?"
+
+"What products are low in stock?"
+
+"Show me revenue for the last 30 days."
+
+"Who are my top customers?"
+
+"Which orders are pending?"
+
+"What changed in my business this week?"
+
+Chat supports:
+- user messages
+- assistant messages
+- tool activity
+- loading
+- errors
+- retry
+- copy
+- regenerate
+
+AI responses can render:
+- text
+- number cards
+- KPI cards
+- tables
+- bar charts
+- line charts
+- pie-style visualizations
+- insight cards
+- recommendation cards
+
+AI tool activity UI:
+
+"Analyzing sales data..."
+
+✓ get_sales_summary
+✓ get_revenue_trend
+✓ get_top_products
+
+Show an expandable details area.
+
+Right context panel desktop:
+- organization
+- selected period
+- business metrics
+- recent activity
+
+Mobile:
+- right context panel becomes a drawer.
+
+IMPORTANT:
+This is only a STATIC UI.
+Do not connect to an AI API.
+Do not implement actual AI.
+Do not implement RAG.
+Do not implement agents.
+
+===============================================================
+COMMAND 16 — AI CAPABILITY PAGE
+===============================================================
+
+Create a polished AI capabilities/roadmap section.
+
+Capabilities:
+
+AI Chat
+RAG Knowledge
+Business Analyst
+Sales Forecasting
+Demand Forecasting
+Customer Segmentation
+Recommendation Engine
+Anomaly Detection
+AI Agents
+Automation
+
+Status:
+- Available
+- Coming Soon
+- Planned
+
+Show this architecture visually:
+
+Business Data
+        ↓
+AI Gateway
+        ↓
+Tools / Analytics / RAG
+        ↓
+AI Business Analyst
+        ↓
+Recommendations
+        ↓
+Human Approval
+        ↓
+Future AI Agents
+
+Do not claim future capabilities are currently active.
+
+===============================================================
+COMMAND 17 — NOTIFICATIONS
+===============================================================
+
+Build notification center.
+
+Notification types:
+- LOW_STOCK
+- ORDER_CREATED
+- ORDER_COMPLETED
+- PAYMENT_RECEIVED
+- SYSTEM
+
+Include:
+- unread/read
+- filters
+- timestamps
+- mark as read
+- mark all as read
+- notification details
+- empty state
+
+===============================================================
+COMMAND 18 — AUDIT LOGS
+===============================================================
+
+Build audit log UI.
+
+Columns:
+- Date
+- User
+- Employee
+- Action
+- Entity
+- Entity ID
+- Description
+- IP
+- Status
+
+Filters:
+- date
+- user
+- action
+- entity
+
+Create an audit detail drawer.
+
+Use realistic mock data.
+
+===============================================================
+COMMAND 19 — SETTINGS
+===============================================================
+
+Build complete settings.
+
+General:
+- organization name
+- slug
+- logo
+- business type
+- email
+- phone
+- address
+- country
+- currency
+- timezone
+
+Business:
+- business information
+- tax settings
+- business address
+
+Invoice:
+- invoice prefix
+- numbering
+- footer
+- tax
+
+Receipt:
+- receipt prefix
+- footer
+- thermal receipt configuration
+
+AI:
+- AI enabled
+- model name
+- AI permissions
+- conversation history
+- usage settings
+
+Security:
+- password UI
+- active sessions
+- login history
+
+Notifications:
+- low stock
+- order created
+- payment received
+- system
+
+===============================================================
+COMMAND 20 — LOGIN
+===============================================================
+
+Build a polished login page.
+
+Include:
+- logo
+- email
+- password
+- remember me
+- forgot password
+- sign in
+- validation
+- loading state
+- error state
+
+Also create:
+- forgot password page
+- reset password visual flow
+
+Static only.
+
+No authentication API.
+
+===============================================================
+COMMAND 21 — RESPONSIVE DESIGN
+===============================================================
+
+Perform a complete responsive pass.
+
+Test visually and logically for:
+
+320px
+375px
+390px
+430px
+768px
+1024px
+1280px
+1440px
+1920px
+
+Mobile:
+- sidebar becomes drawer
+- mobile top bar
+- tables become scrollable or card-based
+- filters collapse
+- forms become single-column
+- KPI cards stack
+- charts resize
+- modals fit viewport
+- AI chat becomes full screen
+- no horizontal overflow
+- buttons remain touch friendly
+
+Tablet:
+- adaptive grids
+- sidebar behavior
+- appropriate content density
+
+Desktop:
+- sidebar
+- content area
+- multi-column dashboard
+- contextual panels
+
+Never simply hide important information on mobile.
+Reorganize it intelligently.
+
+===============================================================
+COMMAND 22 — ACCESSIBILITY
+===============================================================
+
+Perform an accessibility pass.
+
+Requirements:
+- semantic HTML
+- keyboard navigation
+- visible focus
+- aria labels
+- accessible dialogs
+- accessible dropdowns
+- accessible forms
+- accessible tables
+- accessible navigation
+- proper headings
+- form errors
+- sufficient contrast
+- touch-friendly controls
+
+Icon-only buttons must have accessible labels/tooltips.
+
+===============================================================
+COMMAND 23 — UX STATES
+===============================================================
+
+Every important page must have:
+
+Loading state
+Skeleton state
+Empty state
+Error state
+Success state
+Disabled state
+Hover state
+Focus state
+
+Create reusable components for these.
+
+Examples:
+
+Empty products:
+"No products yet"
+"Create your first product"
+
+Empty orders:
+"No orders found"
+
+Empty notifications:
+"You're all caught up"
+
+Empty AI conversations:
+"Start a conversation with your Business Analyst"
+
+===============================================================
+COMMAND 24 — MOCK DATA
+===============================================================
+
+Create centralized realistic mock data.
+
+Entities:
+
+Organization
+User
+Employee
+Role
+Permission
+Category
+Product
+Inventory
+InventoryTransaction
+Customer
+Order
+OrderItem
+Payment
+Invoice
+Receipt
+AIConversation
+AIMessage
+AIToolCall
+OrganizationSetting
+Notification
+AuditLog
+OrderStatusHistory
+
+Do not scatter random mock objects across components.
+
+Keep mock data typed.
+
+===============================================================
+COMMAND 25 — API-READY ARCHITECTURE
+===============================================================
+
+Do NOT call APIs yet.
+
+Prepare service interfaces that can later connect to Django REST Framework.
+
+Expected future endpoints:
+
+GET /api/dashboard/summary/
+GET /api/dashboard/revenue-trend/
+
+GET /api/products/
+GET /api/products/:id/
+POST /api/products/
+PATCH /api/products/:id/
+DELETE /api/products/:id/
+
+GET /api/categories/
+
+GET /api/inventory/
+GET /api/inventory/transactions/
+POST /api/inventory/adjustments/
+
+GET /api/customers/
+GET /api/customers/:id/
+
+GET /api/orders/
+GET /api/orders/:id/
+POST /api/orders/
+
+GET /api/invoices/
+GET /api/invoices/:id/
+
+GET /api/payments/
+
+GET /api/employees/
+GET /api/roles/
+GET /api/permissions/
+
+GET /api/reports/
+
+POST /api/ai/chat/
+GET /api/ai/conversations/
+GET /api/ai/conversations/:id/
+
+GET /api/notifications/
+GET /api/audit-logs/
+
+Create TypeScript types for these future API responses.
+
+Pages should depend on services rather than hardcoded data directly.
+
+For now, services should return mock data.
+
+===============================================================
+COMMAND 26 — PROJECT ARCHITECTURE
+===============================================================
+
+Use a maintainable structure such as:
+
+src/
+├── app/
+│   ├── router/
+│   ├── providers/
+│   └── config/
+│
+├── components/
+│   ├── ui/
+│   ├── layout/
+│   ├── tables/
+│   ├── forms/
+│   ├── charts/
+│   └── ai/
+│
+├── features/
+│   ├── dashboard/
+│   ├── products/
+│   ├── categories/
+│   ├── inventory/
+│   ├── customers/
+│   ├── orders/
+│   ├── billing/
+│   ├── reports/
+│   ├── employees/
+│   ├── roles/
+│   ├── notifications/
+│   ├── audit/
+│   ├── settings/
+│   └── ai/
+│
+├── layouts/
+├── pages/
+├── services/
+│   ├── api/
+│   ├── mock/
+│   └── auth/
+├── hooks/
+├── types/
+├── utils/
+├── constants/
+└── assets/
+
+Avoid giant components.
+
+Extract reusable components.
+
+===============================================================
+COMMAND 27 — UI POLISH
+===============================================================
+
+Perform a visual polish pass.
+
+Check:
+- typography
+- spacing
+- border radius
+- shadows
+- cards
+- tables
+- badges
+- buttons
+- inputs
+- dropdowns
+- modals
+- empty states
+- navigation
+- page headers
+- responsive spacing
+
+The application should look like a serious modern SaaS Business Operating System.
+
+It should NOT look like:
+- a beginner project
+- a generic admin template
+- a Bootstrap dashboard
+- a random collection of components
+
+Maintain one coherent design language.
+
+===============================================================
+COMMAND 28 — REMOVE ALL NON-TAILWIND STYLING
+===============================================================
+
+STRICT FINAL STYLING CHECK.
+
+Search the entire project for:
+
+<style
+style={{
+.css
+.scss
+.sass
+.less
+styled-components
+emotion
+@apply
+Bootstrap
+Material UI
+Chakra
+Ant Design
+DaisyUI
+Flowbite
+shadcn
+
+Remove any styling implementation that violates the rule.
+
+FINAL STYLING RULE:
+
+Tailwind CSS utility classes ONLY.
+
+No custom CSS.
+
+No component-library styling.
+
+No inline style objects.
+
+Use Tailwind classes directly in JSX/TSX.
+
+===============================================================
+COMMAND 29 — CODE QUALITY AUDIT
+===============================================================
+
+Act as a senior frontend engineer.
+
+Audit the entire project.
+
+Check:
+
+- broken imports
+- missing imports
+- TypeScript errors
+- runtime errors
+- broken routes
+- dead routes
+- dead buttons
+- console.log
+- console errors
+- duplicated code
+- giant components
+- bad state handling
+- inconsistent mock data
+- broken responsive layouts
+- overflow
+- inaccessible controls
+- missing loading states
+- missing empty states
+- missing error states
+
+Fix all issues.
+
+===============================================================
+COMMAND 30 — FINAL BUILD
+===============================================================
+
+Run:
+
+npm install
+npm run build
+
+If linting exists:
+
+npm run lint
+
+Fix every error.
+
+Do not stop until the production build succeeds.
+
+Final requirements:
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Lucide React
+- Static mock data
+- Fully responsive
+- Accessible
+- Production-quality UI
+- API-ready architecture
+- No backend
+- No database
+- No AI API
+- No RAG
+- No ML
+- No agents
+- No custom CSS
+- No UI component library
+- Tailwind CSS ONLY for styling
+
+The final application must feel like a complete AI-powered Business Operating System frontend.
