@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "/Users/abumdashrafulrahat/Desktop/Software Engineering/backend/venv2/bin/python",
+  "python.analysis.extraPaths": [
+    "/Users/abumdashrafulrahat/Desktop/Software Engineering/backend"
+  ],
+  "python.envFile": "${workspaceFolder}/.env"
+}

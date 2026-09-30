@@ -1,0 +1,41 @@
+step 1: python venv : python3 -m venv venv
+step 2: to activate py venv: source venv/bin/activate
+step 3: install: pip install django djangorestframework djangorestframework-simplejwt django-cors-headers
+step 4: django-admin startproject backend .
+step 5: create django app:
+        python manage.py startapp users     
+        python manage.py startapp customers     
+        python manage.py startapp catalog   
+        python manage.py startapp inventory     
+        python manage.py startapp orders    
+        python manage.py startapp billing
+        python manage.py startapp analytics
+        python manage.py startapp audit 
+        python manage.py startapp core
+step 6: then migrate:
+            python manage.py makemigrations
+            python manage.py migrate
+step 7: create superuser: 
+            python manage.py createsuperuser
+            username: rahat
+            email: rahat@gmail.com
+            password: 123
+
+step 7: pip freeze > requirements.txt
+        just write :pip install -r requirements.txt
+        to install all dependency
+
+Step 8: Now write models in each app and
+        then run python manage.py makemigrations
+        then run python manage.py migrate
+Step 9: Now write serializers in each app and
+        then run python manage.py makemigrations
+        then run python manage.py migrate
+
+Step 10: write permissions; first write a global permission.py
+        then use it else where.
+
+Step 11: then write admin.py in each apps
+
+Step 12: now write views.py in each apps and urls.py in each apps and then include them in backend/urls.py
+

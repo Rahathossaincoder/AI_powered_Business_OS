@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<er_diagram name="Business OS MVP Database">
+
+  <!-- ==================================================================== -->
+  <!-- ENTITIES                                                             -->
+  <!-- ==================================================================== -->
+  <entities>
+
+    <!-- Strong Entities -->
+    <entity name="Organization" type="Strong">
+      <attributes>
+        <attribute name="organization_id" type="PK" primary_key="true" />
+        <attribute name="name" type="Simple" />
+        <attribute name="slug" type="AlternateKey" />
+        <attribute name="business_type" type="Simple" />
+        <attribute name="email" type="Simple" />
+        <attribute name="phone" type="Simple" />
+        <attribute name="address_line1" type="Simple" />
+        <attribute name="address_line2" type="Simple" />
+        <attribute name="city" type="Simple" />
+        <attribute name="state" type="Simple" />
+        <attribute name="postal_code" type="Simple" />
+        <attribute name="country" type="Simple" />
+        <attribute name="currency" type="Simple" />
+        <attribute name="timezone" type="Simple" />
+        <attribute name="logo" type="Simple" />
+        <attribute name="is_active" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Branch" type="Strong">
+      <attributes>
+        <attribute name="branch_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="code" type="AlternateKey" />
+        <attribute name="name" type="Simple" />
+        <attribute name="phone" type="Simple" />
+        <attribute name="email" type="Simple" />
+        <attribute name="address_line1" type="Simple" />
+        <attribute name="address_line2" type="Simple" />
+        <attribute name="city" type="Simple" />
+        <attribute name="state" type="Simple" />
+        <attribute name="postal_code" type="Simple" />
+        <attribute name="country" type="Simple" />
+        <attribute name="is_main_branch" type="Simple" />
+        <attribute name="is_active" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, code" />
+      </constraints>
+    </entity>
+
+    <entity name="User" type="Strong">
+      <attributes>
+        <attribute name="user_id" type="PK" primary_key="true" />
+        <attribute name="email" type="AlternateKey" />
+        <attribute name="password_hash" type="Simple" />
+        <attribute name="first_name" type="Simple" />
+        <attribute name="last_name" type="Simple" />
+        <attribute name="phone" type="Simple" />
+        <attribute name="profile_picture" type="Simple" />
+        <attribute name="is_active" type="Simple" />
+        <attribute name="email_verified" type="Simple" />
+        <attribute name="last_login_at" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Employee" type="Strong">
+      <attributes>
+        <attribute name="employee_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="branch_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="user_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="role_id" type="FK" foreign_key="true" />
+        <attribute name="employee_code" type="AlternateKey" />
+        <attribute name="first_name" type="Simple" />
+        <attribute name="last_name" type="Simple" />
+        <attribute name="phone" type="Simple" />
+        <attribute name="email" type="Simple" />
+        <attribute name="job_title" type="Simple" />
+        <attribute name="status" type="Simple" />
+        <attribute name="hire_date" type="Simple" />
+        <attribute name="avatar" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, employee_code" />
+      </constraints>
+    </entity>
+
+    <entity name="Role" type="Strong">
+      <attributes>
+        <attribute name="role_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="name" type="Simple" />
+        <attribute name="description" type="Simple" />
+        <attribute name="is_system_role" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Permission" type="Strong">
+      <attributes>
+        <attribute name="permission_id" type="PK" primary_key="true" />
+        <attribute name="code" type="AlternateKey" />
+        <attribute name="name" type="Simple" />
+        <attribute name="description" type="Simple" />
+        <attribute name="module" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Category" type="Strong">
+      <attributes>
+        <attribute name="category_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="parent_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="name" type="Simple" />
+        <attribute name="slug" type="Simple" />
+        <attribute name="description" type="Simple" />
+        <attribute name="image" type="Simple" />
+        <attribute name="is_active" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Product" type="Strong">
+      <attributes>
+        <attribute name="product_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="category_id" type="FK" foreign_key="true" />
+        <attribute name="sku" type="AlternateKey" />
+        <attribute name="name" type="Simple" />
+        <attribute name="description" type="Simple" />
+        <attribute name="unit" type="Simple" />
+        <attribute name="cost_price" type="Simple" />
+        <attribute name="selling_price" type="Simple" />
+        <attribute name="reorder_level" type="Simple" />
+        <attribute name="image" type="Simple" />
+        <attribute name="is_active" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, sku" />
+      </constraints>
+    </entity>
+
+    <entity name="Inventory" type="Strong">
+      <attributes>
+        <attribute name="inventory_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="branch_id" type="FK" foreign_key="true" />
+        <attribute name="product_id" type="FK" foreign_key="true" />
+        <attribute name="quantity" type="Simple" />
+        <attribute name="reorder_level" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="branch_id, product_id" />
+      </constraints>
+    </entity>
+
+    <entity name="InventoryTransaction" type="Strong">
+      <attributes>
+        <attribute name="inventory_transaction_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="branch_id" type="FK" foreign_key="true" />
+        <attribute name="inventory_id" type="FK" foreign_key="true" />
+        <attribute name="product_id" type="FK" foreign_key="true" />
+        <attribute name="transaction_type" type="Simple" />
+        <attribute name="quantity_change" type="Simple" />
+        <attribute name="quantity_before" type="Simple" />
+        <attribute name="quantity_after" type="Simple" />
+        <attribute name="reference_type" type="Simple" />
+        <attribute name="reference_id" type="Simple" />
+        <attribute name="reason" type="Simple" />
+        <attribute name="note" type="Simple" />
+        <attribute name="created_by_id" type="FK" foreign_key="true" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Customer" type="Strong">
+      <attributes>
+        <attribute name="customer_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="customer_code" type="AlternateKey" />
+        <attribute name="name" type="Simple" />
+        <attribute name="phone" type="Simple" />
+        <attribute name="email" type="Simple" />
+        <attribute name="address_line1" type="Simple" />
+        <attribute name="address_line2" type="Simple" />
+        <attribute name="city" type="Simple" />
+        <attribute name="state" type="Simple" />
+        <attribute name="postal_code" type="Simple" />
+        <attribute name="country" type="Simple" />
+        <attribute name="notes" type="Simple" />
+        <attribute name="is_active" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, customer_code" />
+      </constraints>
+    </entity>
+
+    <entity name="Order" type="Strong">
+      <attributes>
+        <attribute name="order_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="branch_id" type="FK" foreign_key="true" />
+        <attribute name="order_number" type="AlternateKey" />
+        <attribute name="customer_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="created_by_id" type="FK" foreign_key="true" />
+        <attribute name="status" type="Simple" />
+        <attribute name="subtotal" type="Derived" />
+        <attribute name="discount" type="Simple" />
+        <attribute name="tax" type="Simple" />
+        <attribute name="total_amount" type="Derived" />
+        <attribute name="notes" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+        <attribute name="completed_at" type="Simple" nullable="true" />
+        <attribute name="cancelled_at" type="Simple" nullable="true" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, order_number" />
+      </constraints>
+    </entity>
+
+    <entity name="Payment" type="Strong">
+      <attributes>
+        <attribute name="payment_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="order_id" type="FK" foreign_key="true" />
+        <attribute name="amount" type="Simple" />
+        <attribute name="payment_method" type="Simple" />
+        <attribute name="status" type="Simple" />
+        <attribute name="transaction_reference" type="Simple" />
+        <attribute name="payment_date" type="Simple" />
+        <attribute name="created_by_id" type="FK" foreign_key="true" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="AIConversation" type="Strong">
+      <attributes>
+        <attribute name="conversation_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="user_id" type="FK" foreign_key="true" />
+        <attribute name="title" type="Simple" />
+        <attribute name="model_name" type="Simple" />
+        <attribute name="status" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="OrganizationSetting" type="Strong">
+      <attributes>
+        <attribute name="setting_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="key" type="Simple" />
+        <attribute name="value" type="JSON" />
+        <attribute name="description" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, key" />
+      </constraints>
+    </entity>
+
+    <entity name="AuditLog" type="Strong">
+      <attributes>
+        <attribute name="audit_log_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="user_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="employee_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="action" type="Simple" />
+        <attribute name="entity_type" type="Simple" />
+        <attribute name="entity_id" type="Simple" />
+        <attribute name="old_values" type="JSON" nullable="true" />
+        <attribute name="new_values" type="JSON" nullable="true" />
+        <attribute name="metadata" type="JSON" nullable="true" />
+        <attribute name="ip_address" type="Simple" nullable="true" />
+        <attribute name="user_agent" type="Simple" nullable="true" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <!-- Weak / Associative Entities -->
+    <entity name="RolePermission" type="Weak">
+      <attributes>
+        <attribute name="role_permission_id" type="PK" primary_key="true" />
+        <attribute name="role_id" type="FK" foreign_key="true" />
+        <attribute name="permission_id" type="FK" foreign_key="true" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="role_id, permission_id" />
+      </constraints>
+    </entity>
+
+    <entity name="OrderItem" type="Weak">
+      <attributes>
+        <attribute name="order_item_id" type="PK" primary_key="true" />
+        <attribute name="order_id" type="FK" foreign_key="true" />
+        <attribute name="product_id" type="FK" foreign_key="true" />
+        <attribute name="quantity" type="Simple" />
+        <attribute name="unit_price" type="Simple" />
+        <attribute name="discount" type="Simple" />
+        <attribute name="tax" type="Simple" />
+        <attribute name="line_total" type="Derived" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="Invoice" type="Weak">
+      <attributes>
+        <attribute name="invoice_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="order_id" type="FK" foreign_key="true" unique="true" />
+        <attribute name="invoice_number" type="AlternateKey" />
+        <attribute name="status" type="Simple" />
+        <attribute name="subtotal" type="Simple" />
+        <attribute name="discount" type="Simple" />
+        <attribute name="tax" type="Simple" />
+        <attribute name="total_amount" type="Simple" />
+        <attribute name="pdf_file" type="Simple" />
+        <attribute name="issued_at" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="updated_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, invoice_number" />
+        <constraint type="UNIQUE" columns="order_id" />
+      </constraints>
+    </entity>
+
+    <entity name="Receipt" type="Weak">
+      <attributes>
+        <attribute name="receipt_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="invoice_id" type="FK" foreign_key="true" unique="true" />
+        <attribute name="receipt_number" type="AlternateKey" />
+        <attribute name="receipt_type" type="Simple" />
+        <attribute name="file_path" type="Simple" />
+        <attribute name="print_status" type="Simple" />
+        <attribute name="generated_at" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+      <constraints>
+        <constraint type="UNIQUE" columns="organization_id, receipt_number" />
+        <constraint type="UNIQUE" columns="invoice_id" />
+      </constraints>
+    </entity>
+
+    <entity name="AIMessage" type="Weak">
+      <attributes>
+        <attribute name="message_id" type="PK" primary_key="true" />
+        <attribute name="conversation_id" type="FK" foreign_key="true" />
+        <attribute name="role" type="Simple" />
+        <attribute name="content" type="Simple" />
+        <attribute name="sequence_number" type="Simple" />
+        <attribute name="token_count" type="Simple" nullable="true" />
+        <attribute name="created_at" type="Simple" />
+      </attributes>
+    </entity>
+
+    <entity name="AIToolCall" type="Weak">
+      <attributes>
+        <attribute name="tool_call_id" type="PK" primary_key="true" />
+        <attribute name="conversation_id" type="FK" foreign_key="true" />
+        <attribute name="message_id" type="FK" foreign_key="true" nullable="true" />
+        <attribute name="tool_name" type="Simple" />
+        <attribute name="arguments" type="JSON" />
+        <attribute name="result" type="JSON" />
+        <attribute name="status" type="Simple" />
+        <attribute name="execution_time_ms" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="completed_at" type="Simple" nullable="true" />
+      </attributes>
+    </entity>
+
+    <entity name="Notification" type="Weak">
+      <attributes>
+        <attribute name="notification_id" type="PK" primary_key="true" />
+        <attribute name="organization_id" type="FK" foreign_key="true" />
+        <attribute name="user_id" type="FK" foreign_key="true" />
+        <attribute name="title" type="Simple" />
+        <attribute name="message" type="Simple" />
+        <attribute name="type" type="Simple" />
+        <attribute name="is_read" type="Simple" />
+        <attribute name="created_at" type="Simple" />
+        <attribute name="read_at" type="Simple" nullable="true" />
+      </attributes>
+    </entity>
+
+  </entities>
+
+  <!-- ==================================================================== -->
+  <!-- RELATIONSHIPS                                                        -->
+  <!-- ==================================================================== -->
+  <relationships>
+
+    <!-- Organization Relationships -->
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Branch" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Employee" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Role" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Product" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Category" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Customer" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Order" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Inventory" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="InventoryTransaction" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Payment" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Invoice" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Receipt" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="AIConversation" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="OrganizationSetting" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="Notification" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Has">
+      <source entity="Organization" cardinality="1" participation="Total" />
+      <target entity="AuditLog" cardinality="M" participation="Partial" />
+    </relationship>
+
+    <!-- Branch Relationships -->
+    <relationship type="Non-Identifying" name="Employs">
+      <source entity="Branch" cardinality="1" participation="Partial" />
+      <target entity="Employee" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Holds">
+      <source entity="Branch" cardinality="1" participation="Total" />
+      <target entity="Inventory" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Processes">
+      <source entity="Branch" cardinality="1" participation="Total" />
+      <target entity="Order" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Logs">
+      <source entity="Branch" cardinality="1" participation="Total" />
+      <target entity="InventoryTransaction" cardinality="M" participation="Total" />
+    </relationship>
+
+    <!-- User Relationships -->
+    <relationship type="Non-Identifying" name="Has">
+      <source entity="User" cardinality="1" participation="Partial" />
+      <target entity="Employee" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Creates">
+      <source entity="User" cardinality="1" participation="Partial" />
+      <target entity="InventoryTransaction" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Creates">
+      <source entity="User" cardinality="1" participation="Partial" />
+      <target entity="Order" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Starts">
+      <source entity="User" cardinality="1" participation="Partial" />
+      <target entity="AIConversation" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Receives">
+      <source entity="User" cardinality="1" participation="Partial" />
+      <target entity="Notification" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Performs">
+      <source entity="User" cardinality="1" participation="Partial" />
+      <target entity="AuditLog" cardinality="M" participation="Partial" />
+    </relationship>
+
+    <!-- Employee Relationships -->
+    <relationship type="Non-Identifying" name="Creates">
+      <source entity="Employee" cardinality="1" participation="Partial" />
+      <target entity="InventoryTransaction" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Creates">
+      <source entity="Employee" cardinality="1" participation="Partial" />
+      <target entity="Order" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Creates">
+      <source entity="Employee" cardinality="1" participation="Partial" />
+      <target entity="Payment" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Performs">
+      <source entity="Employee" cardinality="1" participation="Partial" />
+      <target entity="AuditLog" cardinality="M" participation="Partial" />
+    </relationship>
+
+    <!-- Role & Permission Relationships -->
+    <relationship type="Identifying" name="Assigned to">
+      <source entity="Role" cardinality="1" participation="Total" />
+      <target entity="Employee" cardinality="M" participation="Partial" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Role" cardinality="1" participation="Total" />
+      <target entity="RolePermission" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Granted through">
+      <source entity="Permission" cardinality="1" participation="Total" />
+      <target entity="RolePermission" cardinality="M" participation="Total" />
+    </relationship>
+
+    <!-- Category Relationships -->
+    <relationship type="Non-Identifying" name="Has subcategory">
+      <source entity="Category" cardinality="1" participation="Partial" />
+      <target entity="Category" cardinality="M" participation="Partial" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Contains">
+      <source entity="Category" cardinality="1" participation="Partial" />
+      <target entity="Product" cardinality="M" participation="Total" />
+    </relationship>
+
+    <!-- Product Relationships -->
+    <relationship type="Identifying" name="Tracks">
+      <source entity="Product" cardinality="1" participation="Total" />
+      <target entity="Inventory" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has movements">
+      <source entity="Product" cardinality="1" participation="Total" />
+      <target entity="InventoryTransaction" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Appears in">
+      <source entity="Product" cardinality="1" participation="Partial" />
+      <target entity="OrderItem" cardinality="M" participation="Total" />
+    </relationship>
+
+    <!-- Inventory Relationships -->
+    <relationship type="Identifying" name="Has movements">
+      <source entity="Inventory" cardinality="1" participation="Total" />
+      <target entity="InventoryTransaction" cardinality="M" participation="Total" />
+    </relationship>
+
+    <!-- Customer Relationships -->
+    <relationship type="Non-Identifying" name="Places">
+      <source entity="Customer" cardinality="1" participation="Partial" />
+      <target entity="Order" cardinality="M" participation="Partial" />
+    </relationship>
+
+    <!-- Order Relationships -->
+    <relationship type="Identifying" name="Contains">
+      <source entity="Order" cardinality="1" participation="Total" />
+      <target entity="OrderItem" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Has">
+      <source entity="Order" cardinality="1" participation="Total" />
+      <target entity="Payment" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Generates">
+      <source entity="Order" cardinality="1" participation="Total" />
+      <target entity="Invoice" cardinality="1" participation="Total" />
+    </relationship>
+
+    <!-- Invoice Relationships -->
+    <relationship type="Identifying" name="Generates">
+      <source entity="Invoice" cardinality="1" participation="Total" />
+      <target entity="Receipt" cardinality="1" participation="Total" />
+    </relationship>
+
+    <!-- AI Relationships -->
+    <relationship type="Identifying" name="Contains">
+      <source entity="AIConversation" cardinality="1" participation="Total" />
+      <target entity="AIMessage" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Identifying" name="Contains">
+      <source entity="AIConversation" cardinality="1" participation="Total" />
+      <target entity="AIToolCall" cardinality="M" participation="Total" />
+    </relationship>
+
+    <relationship type="Non-Identifying" name="Triggers">
+      <source entity="AIMessage" cardinality="1" participation="Partial" />
+      <target entity="AIToolCall" cardinality="M" participation="Partial" />
+    </relationship>
+
+  </relationships>
+
+</er_diagram>
