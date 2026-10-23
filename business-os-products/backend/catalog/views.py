@@ -1,4 +1,15 @@
-from django.db.models import Case, Count, F, IntegerField, OuterRef, Q, Subquery, Sum, Value, When
+from django.db.models import (
+    Case,
+    Count,
+    F,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -31,7 +42,15 @@ class ProductViewSet(OrganizationScopedMixin, viewsets.ModelViewSet):
     pagination_class = StandardPagination
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ["name", "sku"]
-    ordering_fields = ["name", "sku", "cost_price", "selling_price", "reorder_level", "stock", "created_at"]
+    ordering_fields = [
+        "name",
+        "sku",
+        "cost_price",
+        "selling_price",
+        "reorder_level",
+        "stock",
+        "created_at",
+    ]
     ordering = ["-created_at"]
 
     def base_queryset(self):
@@ -44,7 +63,11 @@ class ProductViewSet(OrganizationScopedMixin, viewsets.ModelViewSet):
         return (
             Product.objects.filter(organization=self.organization)
             .select_related("category")
-            .annotate(stock=Coalesce(Subquery(stock_total, output_field=IntegerField()), Value(0)))
+            .annotate(
+                stock=Coalesce(
+                    Subquery(stock_total, output_field=IntegerField()), Value(0)
+                )
+            )
             .annotate(
                 stock_status=Case(
                     When(stock__lte=0, then=Value("out_of_stock")),

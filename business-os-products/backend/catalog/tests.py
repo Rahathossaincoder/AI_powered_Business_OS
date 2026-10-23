@@ -13,23 +13,42 @@ class ProductApiTests(APITestCase):
     def setUp(self):
         self.org = Organization.objects.create(name="Wavespace", slug="wavespace")
         self.other_org = Organization.objects.create(name="Other", slug="other")
-        self.user = User.objects.create_user(username="a", email="a@x.io", password="pw")
+        self.user = User.objects.create_user(
+            username="a", email="a@x.io", password="pw"
+        )
         Employee.objects.create(organization=self.org, user=self.user)
-        self.cat = Category.objects.create(organization=self.org, name="Hardware", slug="hardware")
-        self.other_cat = Category.objects.create(organization=self.other_org, name="Secret", slug="secret")
+        self.cat = Category.objects.create(
+            organization=self.org, name="Hardware", slug="hardware"
+        )
+        self.other_cat = Category.objects.create(
+            organization=self.other_org, name="Secret", slug="secret"
+        )
         self.client.force_authenticate(self.user)
 
     def make(self, sku, qty, reorder=5, **kw):
         p = Product.objects.create(
-            organization=self.org, category=self.cat, sku=sku, name=f"P {sku}",
-            cost_price=10, selling_price=20, reorder_level=reorder, **kw,
+            organization=self.org,
+            category=self.cat,
+            sku=sku,
+            name=f"P {sku}",
+            cost_price=10,
+            selling_price=20,
+            reorder_level=reorder,
+            **kw,
         )
         Inventory.objects.create(organization=self.org, product=p, quantity=qty)
         return p
 
     def payload(self, **kw):
-        d = {"sku": "sku-1", "name": "Widget", "category": self.cat.pk,
-             "cost_price": "10.00", "selling_price": "25.00", "reorder_level": 3, "unit": "pcs"}
+        d = {
+            "sku": "sku-1",
+            "name": "Widget",
+            "category": self.cat.pk,
+            "cost_price": "10.00",
+            "selling_price": "25.00",
+            "reorder_level": 3,
+            "unit": "pcs",
+        }
         d.update(kw)
         return d
 
@@ -42,7 +61,11 @@ class ProductApiTests(APITestCase):
         self.assertEqual(Product.objects.get(pk=r.data["id"]).organization, self.org)
 
     def test_frontend_cannot_choose_organization(self):
-        r = self.client.post("/api/products/", self.payload(organization=self.other_org.pk), format="json")
+        r = self.client.post(
+            "/api/products/",
+            self.payload(organization=self.other_org.pk),
+            format="json",
+        )
         self.assertEqual(r.status_code, 201)
         self.assertEqual(Product.objects.get(pk=r.data["id"]).organization, self.org)
 
@@ -53,12 +76,16 @@ class ProductApiTests(APITestCase):
         self.assertIn("sku", r.data)
 
     def test_other_orgs_category_rejected(self):
-        r = self.client.post("/api/products/", self.payload(category=self.other_cat.pk), format="json")
+        r = self.client.post(
+            "/api/products/", self.payload(category=self.other_cat.pk), format="json"
+        )
         self.assertEqual(r.status_code, 400)
         self.assertIn("category", r.data)
 
     def test_negative_price_rejected(self):
-        r = self.client.post("/api/products/", self.payload(cost_price="-1"), format="json")
+        r = self.client.post(
+            "/api/products/", self.payload(cost_price="-1"), format="json"
+        )
         self.assertEqual(r.status_code, 400)
 
     def test_stock_status_and_summary(self):
@@ -66,7 +93,9 @@ class ProductApiTests(APITestCase):
         self.make("B", 3)
         self.make("C", 0)
         s = self.client.get("/api/products/summary/").data
-        self.assertEqual(s, {"total": 3, "in_stock": 1, "low_stock": 1, "out_of_stock": 1})
+        self.assertEqual(
+            s, {"total": 3, "in_stock": 1, "low_stock": 1, "out_of_stock": 1}
+        )
         r = self.client.get("/api/products/?stock_status=low_stock")
         self.assertEqual([x["sku"] for x in r.data["results"]], ["B"])
 
@@ -79,14 +108,22 @@ class ProductApiTests(APITestCase):
         self.assertEqual(r.data["count"], 0)
 
     def test_tenant_isolation(self):
-        other = Product.objects.create(organization=self.other_org, category=self.other_cat,
-                                       sku="X", name="X", cost_price=1, selling_price=2)
+        other = Product.objects.create(
+            organization=self.other_org,
+            category=self.other_cat,
+            sku="X",
+            name="X",
+            cost_price=1,
+            selling_price=2,
+        )
         self.assertEqual(self.client.get("/api/products/").data["count"], 0)
         self.assertEqual(self.client.get(f"/api/products/{other.pk}/").status_code, 404)
 
     def test_update_and_soft_delete(self):
         p = self.make("A", 10)
-        r = self.client.patch(f"/api/products/{p.pk}/", {"selling_price": "99.00"}, format="json")
+        r = self.client.patch(
+            f"/api/products/{p.pk}/", {"selling_price": "99.00"}, format="json"
+        )
         self.assertEqual(r.status_code, 200, r.data)
         self.assertEqual(r.data["selling_price"], "99.00")
         self.assertEqual(r.data["stock"], 10)

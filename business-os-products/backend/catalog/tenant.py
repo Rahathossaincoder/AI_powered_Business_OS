@@ -4,9 +4,13 @@ from rest_framework.exceptions import PermissionDenied
 
 def get_request_organization(request):
     """The backend decides the tenant. The frontend is never trusted to send organization_id."""
-    Employee = apps.get_model("users", "Employee")  # adjust the app label if your Employee model lives elsewhere
+    Employee = apps.get_model(
+        "users", "Employee"
+    )  # adjust the app label if your Employee model lives elsewhere
     employee = (
-        Employee.objects.filter(user=request.user).select_related("organization").first()
+        Employee.objects.filter(user=request.user)
+        .select_related("organization")
+        .first()
     )
     if employee is None:
         raise PermissionDenied("Your account is not linked to an organization.")

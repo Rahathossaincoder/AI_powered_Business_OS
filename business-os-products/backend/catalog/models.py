@@ -7,7 +7,11 @@ class Category(models.Model):
         "core.Organization", on_delete=models.CASCADE, related_name="categories"
     )
     parent = models.ForeignKey(
-        "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="children"
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="children",
     )
     name = models.CharField(max_length=150)
     slug = models.SlugField(max_length=150)
@@ -21,7 +25,8 @@ class Category(models.Model):
         db_table = "categories"
         constraints = [
             models.UniqueConstraint(
-                fields=["organization", "slug"], name="unique_category_slug_per_organization"
+                fields=["organization", "slug"],
+                name="unique_category_slug_per_organization",
             )
         ]
 
@@ -34,7 +39,9 @@ class Product(models.Model):
     organization = models.ForeignKey(
         "core.Organization", on_delete=models.CASCADE, related_name="products"
     )
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="products")
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, related_name="products"
+    )
     sku = models.CharField(max_length=100)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -51,7 +58,8 @@ class Product(models.Model):
         db_table = "products"
         constraints = [
             models.UniqueConstraint(
-                fields=["organization", "sku"], name="unique_product_sku_per_organization"
+                fields=["organization", "sku"],
+                name="unique_product_sku_per_organization",
             )
         ]
 
