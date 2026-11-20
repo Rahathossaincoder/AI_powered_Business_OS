@@ -5,9 +5,9 @@ Line numbers below refer to the files exactly as delivered in this folder.
 
 ---
 
-## 0. What I checked in your uploads
+## 0. Project context
 
-- `db.sqlite3`: `categories` and `products` tables already exist, so `catalog/models.py` mirrors those columns exactly (same names, same unique constraints). `inventory` has a `quantity` per branch and product; stock is summed from there.
+- The backend is a Django project with catalog and branch-level inventory APIs. Its SQLite database may contain existing data; back it up before applying migrations.
 - `products.html`: the page layout, stat cards, table columns, search/category filter, and the add-product modal were used as the visual spec.
 - `business_os_database_er_documentation.txt`: followed these rules: tenant isolation by `organization_id`, backend decides the tenant, `UNIQUE(organization_id, sku)`, stock is not stored on Product.
 - `business-os-tailwind-codex-commands.txt` (Command 06 and 25): products list with search, category/status/price filters, grid/table toggle, pagination; detail page; create/edit with validation, error states, success toast, cancel confirmation; endpoints `GET/POST /api/products/`, `GET/PATCH/DELETE /api/products/:id/`, `GET /api/categories/`. Tailwind-only styling, no UI library.
@@ -38,28 +38,23 @@ Three rules the backend enforces that the frontend can never override:
 
 ## 2. Setup
 
-### Backend (add to your existing Django project)
-1. `pip install djangorestframework django-cors-headers`
-2. Copy `backend/catalog/{serializers,views,urls,tenant,pagination,admin,tests}.py` into your existing `catalog/` app.
-   `models.py` is included for reference. Your repo already has catalog models and migrations, so compare first and keep yours if the fields match.
-3. Merge `backend/settings_snippet.py` into your `settings.py` (apps, middleware, CORS, REST_FRAMEWORK).
-4. In your root `urls.py` add `path("api/", include("catalog.urls"))`.
-5. Check two assumptions I could not verify (I only had your database, not your Python code):
-   - `tenant.py` line 7: `apps.get_model("users", "Employee")`. Change `"users"` if Employee lives in another app.
-   - `views.py` line 8 and 39–41: `from inventory.models import Inventory`, with a `product` foreign key and a `quantity` field.
-6. Run `python manage.py makemigrations --check`. If it asks for changes, adjust models to match your existing migration rather than creating a new one.
-7. Create an Organization, a User, an Employee linking them, and a few Categories (Django admin works).
-8. `python manage.py test catalog` (the tests assume your Employee has `organization` and `user` fields).
+### Backend
+1. `cd backend`, create and activate a virtual environment, then install `pip install -r requirements.txt`.
+2. Set `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS` for deployment. `DJANGO_DEBUG` defaults to `true` for local development; production startup requires both values and should set `DJANGO_DEBUG=false`. Behind a trusted HTTPS proxy, also set `DJANGO_USE_X_FORWARDED_PROTO=true`; customize `DJANGO_CSRF_TRUSTED_ORIGINS` and `CORS_ALLOWED_ORIGINS` for the deployed frontend.
+3. Run `python manage.py migrate` to create/update the database schema. This repository's checked-in SQLite database may contain existing data, so back it up before migrating it.
+4. For disposable demo data only, run `python manage.py seed_demo`. It creates a demo account (`shakib` / `shakib123`); never use that account in production.
+5. Start the API with `python manage.py runserver`. The API accepts Basic auth for local development and JWTs from `POST /api/auth/token/` (username/password); refresh with `POST /api/auth/token/refresh/`. The React client sends an access token stored as `access_token` in local storage.
+6. Run `python manage.py check`, `python manage.py makemigrations --check --dry-run`, and `python manage.py test`.
 
 ### Frontend
 1. `cd frontend && npm install`
-2. Copy `.env.example` to `.env.local` and set `VITE_DEV_BASIC_AUTH=youremail@x.com:yourpassword` for local testing only. Remove it once the login teammate's token flow is in (the client already sends `Bearer <access_token>` from `localStorage` when present).
-3. Start Django (`python manage.py runserver`), then `npm run dev`, then open http://localhost:5173/products. Vite proxies `/api` to Django, so no CORS problems in dev.
+2. Copy `.env.example` to `.env.local` and set `VITE_DEV_BASIC_AUTH=username:password` for local testing only. The API also accepts `Authorization: Bearer <access_token>` from the JWT endpoint.
+3. In one terminal, run `cd backend && python manage.py runserver`; in another, run `cd frontend && npm run dev`. Open http://localhost:5173/products. Vite proxies `/api` to Django, so no CORS problems in dev.
 
 ## 3. What was verified, and what was not
 
 Verified:
-- 11 backend tests pass: create, SKU uppercasing and uniqueness, cross-tenant category rejected, client-supplied `organization` ignored, negative price rejected, stock status and summary counts, search/price/stock filters, tenant isolation (other org's product returns 404), update, soft delete, login required, categories.
+- Backend tests cover catalog behavior, tenant isolation, inventory adjustments and ledger consistency, and JWT authentication.
 - A live HTTP check with curl (Basic auth) created and listed a product.
 - `npm run build` (TypeScript strict + Vite production build) succeeds.
 

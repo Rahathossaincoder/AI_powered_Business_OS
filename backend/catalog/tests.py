@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 
 from catalog.models import Category, Product
-from core.models import Organization
+from core.models import Branch, Organization
 from inventory.models import Inventory
 from users.models import Employee
 
@@ -23,8 +23,8 @@ class ProductApiTests(APITestCase):
         self.other_cat = Category.objects.create(
             organization=self.other_org, name="Secret", slug="secret"
         )
+        self.branch = Branch.objects.create(organization=self.org, code="BR-001", name="Main HQ")
         self.client.force_authenticate(self.user)
-
     def make(self, sku, qty, reorder=5, **kw):
         p = Product.objects.create(
             organization=self.org,
@@ -36,7 +36,7 @@ class ProductApiTests(APITestCase):
             reorder_level=reorder,
             **kw,
         )
-        Inventory.objects.create(organization=self.org, product=p, quantity=qty)
+        Inventory.objects.create(organization=self.org, branch=self.branch, product=p, quantity=qty)
         return p
 
     def payload(self, **kw):
