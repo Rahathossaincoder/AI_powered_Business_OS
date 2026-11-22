@@ -1,10 +1,11 @@
-import { LayoutGrid, Menu, Package, Users, X } from "lucide-react";
+import { Boxes, LayoutGrid, Menu, Package, Users, X } from "lucide-react";
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
 const NAV = [
   { to: "/dashboard", label: "Overview", icon: LayoutGrid },
   { to: "/products", label: "Products & Categories", icon: Package },
+  { to: "/inventory", label: "Inventory Ledger", icon: Boxes },
   { to: "/customers", label: "Customers CRM", icon: Users },
 ];
 
